@@ -134,7 +134,7 @@ a:hover, a:active, a:focus {
 }
 
 .button a:visited {
-  color: #FFF;
+  color: #FFF !important;
 }
 
 @media (max-width: 992px) {
