@@ -133,10 +133,6 @@ a:hover, a:active, a:focus {
   text-decoration: none;
 }
 
-#button-white {
-  color: #FFF;
-}
-
 @media (max-width: 992px) {
   .hire {
   display: block;
