@@ -149,6 +149,14 @@ a:hover, a:active, a:focus {
   color: #FFF;
 }
 
+#button-white a:active {
+  color: #FFF;
+}
+
+#button-white a:focus {
+  color: #FFF;
+}
+
 @media (max-width: 992px) {
   .hire {
   display: block;
