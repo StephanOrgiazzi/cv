@@ -133,23 +133,7 @@ a:hover, a:active, a:focus {
   text-decoration: none;
 }
 
-.button a:visited {
-  color: #FFF;
-}
-
 #button-white {
-  color: #FFF;
-}
-
-.hire a:visited {
-  color: #FFF;
-}
-
-.hire a:active {
-  color: #FFF;
-}
-
-.hire a:focus {
   color: #FFF;
 }
 
