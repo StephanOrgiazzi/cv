@@ -133,7 +133,7 @@ a:hover, a:active, a:focus {
   text-decoration: none;
 }
 
-button a:visited {
+.button a:visited {
   color: #FFF;
 }
 
