@@ -1,354 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Stephan Front-End Developer</title>
-
-    <link rel="shortcut icon" type="image/x-icon" href="images/soround.png">
-
-    <!-- Bootstrap core CSS -->
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <link href="style.css" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="http://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
-
-    <!-- Import Lato Font -->
-    <style>
-        @import 'https://fonts.googleapis.com/css?family=Lato';
-    </style>
-
-    <!-- Show/Hide on mobile-->
-    <style type="text/css">
-        .mobileShow {
-            display: none;
-        }
-        /* Show on mobile */
-        @media (min-device-width: 320px) and (max-width: 992px) {
-            .mobileShow {
-                display: inline;
-            }
-        }
-    </style>
-
-    <style type="text/css">
-        .mobileHide {
-            display: inline;
-        }
-        /* Hide on mobile */
-        @media (min-device-width: 320px) and (max-width: 992px) {
-            .mobileHide {
-                display: none;
-            }
-        }
-    </style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="img/soround.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
+  <link type="text/css" rel="stylesheet" href="style.css" />
+  <title>Stephan Front-End Developper</title>
 </head>
+<body>
 
-<body id="main">
-
-    <!-- Nav
-  ================================================== -->
-
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-                <a class="navbar-brand smoothScroll" href="#main" data-toggle="collapse" data-target=".navbar-collapse.in"><img src="images/soround.png" class="logo" /></a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a data-toggle="collapse" data-target=".navbar-collapse.in" href="#main" class="smoothScroll">Home</a></li>
-                    <li><a data-toggle="collapse" data-target=".navbar-collapse.in" href="#features" class="smoothScroll">Features</a></li>
-                    <li><a data-toggle="collapse" data-target=".navbar-collapse.in" href="#testimonials" class="smoothScroll">Testimonials</a></li>
-                    <li><a data-toggle="collapse" data-target=".navbar-collapse.in" href="#contact" class="smoothScroll">Contact</a></li>
-                </ul>
-            </div>
-
-        </div> <!-- Container -->
-
-    </nav>
-
-
-    <!-- Main
-    ================================================== -->
-
-    <section class="container main">
-        <div class="row">
-            <div class="col-md-6">
-                <img src="images/iphone_on.png" class="iphone" />
-            </div>
-            <div class="col-md-6">
-                <h1>The Front-End Developer<br />You Need.</h1>
-                <h2>Stephan is the front-end developer you need to develop what you want, exactly the way you want.</h2>
-                <a href="#contact" class="smoothScroll"><button type="button" class="button hire">Hire Now</button></a>
-            </div>
-        </div>
-    </section>
-
-    <a href="#press" class="smoothScroll"><img src="images/arrow.png" class="arrow"></a>
-
-
-    <!-- Press
-      ================================================== -->
-
-    <section class="press title" id="press">
-        <div class="wrapper_press">
-            <h2>Praised by the world’s top media</h2>
-            <br />
-            <img src="images/techcrunch.png" class="logopress" />
-            <img src="images/theverge.png" class="logopress" />
-            <img src="images/forbes.png" class="logopress" />
-            <img src="images/mashable.png" class="logopress" />
-            <img src="images/fastcompany.jpg" class="logopress" />
-            <img src="images/tmz.png" class="logopress" />
-        </div>
-    </section>
-
-
-    <!-- Features
-      ================================================== -->
-    <div id="features"></div>
-
-    <section class="features title">
-        <div class="wrapper_features">
-            <h2>Features</h2>
-            <br />
-            <div class="container">
-                <div class="superwrap">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h3>Integration</h3>
-                            <p>
-                                Seamless HTML5 and CSS3 integration, knowledge of the Bootstrap framework, and some basic understanding in Javascript and jQuery.
-                            </p>
-                        </div>
-                        <div class="col-md-8">
-                            <img src="images/screen1.png" class="screen img-responsive" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <br />
-            <br />
-            <div class="container">
-                <div class="superwrap">
-                    <div class="row">
-                        <div class="col-md-4 col-md-push-8">
-                            <h3>Digital Strategy</h3>
-                            <p>
-                                Keynote expert. Market analysis, Benchmark, Brand equity, Consumer journey, Conversion funnel optimization, Web analytics...
-                            </p>
-                        </div>
-                        <div class="col-md-8 col-md-pull-4">
-                            <img src="images/ipadon.png" class="ipad img-responsive" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-
-    <!-- Testimonials
-      ================================================== -->
-
-    <section class="testimonials title" id="testimonials">
-        <h2>Testimonials</h2>
-        <br />
-        <div class="container mobileHide">
-            <div class="row wrap">
-                <div class="col-md-4">
-                    <div class="imgcrop">
-                        <img src="images/mark.jpg" />
-                    </div>
-                    <div class="quote">
-                        <p>"Stephan is not only a brilliant developer, he's also a very cool dude! I see him as a younger version of me. But even cooler."</p>
-                        <br />
-                        <p>- Mark Zuckerberg, CEO of Facebook</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="imgcrop">
-                        <img src="images/sundar.jpg" />
-                    </div>
-                    <div class="quote">
-                        <p>"Undoubtedly the most interesting man in the industry right now! His unconventional personal background makes him a very valuable asset."</p>
-                        <br />
-                        <p>- Sundar Pichai, CEO of Google</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="imgcrop">
-                        <img src="images/hodor.jpg" />
-                    </div>
-                    <div class="quote">
-                        <p>"Hodor..."</p>
-                        <br />
-                        <p>- Hodor, Game of Thrones character</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <div class="mobileShow">
-
-        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            <ol class="carousel-indicators">
-                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-            </ol>
-
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                    <div class="col-md-4">
-                        <div class="imgcrop">
-                            <img src="images/mark.jpg" />
-                        </div>
-                        <div class="quote">
-                            <p>"Stephan is not only a brilliant developer, he's also a very cool dude! I see him as a younger version of me. But even cooler."</p>
-                            <br />
-                            <p>- Mark Zuckerberg, CEO of Facebook</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="col-md-4">
-                        <div class="imgcrop">
-                            <img src="images/sundar.jpg" />
-                        </div>
-                        <div class="quote">
-                            <p>"Undoubtedly the most interesting man in the industry right now! His unconventional personal background makes him a very valuable asset."</p>
-                            <br />
-                            <p>- Sundar Pichai, CEO of Google</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="col-md-4">
-                        <div class="imgcrop">
-                            <img src="images/hodor.jpg" />
-                        </div>
-                        <div class="quote">
-                            <p>"Hodor..."</p>
-                            <br />
-                            <p>- Hodor, Game of Thrones character</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                    <span class="glyphicon glyphicon-chevron-left black" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                    <span class="glyphicon glyphicon-chevron-right black" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-
-        </div>
-
+  <header id="header">
+    <div class="header-wrapper">
+      <input id="toggle" type="checkbox" name="toggle">
+      <label class="toggle-container" for="toggle">
+        <span class="button button-toggle toggle"></span>
+      </label>
+      <nav class="nav">
+        <a class="nav-item item" href="#header-sticky-wrapper">Home</a>
+        <a class="nav-item item" href="#features">Features</a>
+        <a class="nav-item item" href="#testimonials">Testimonials</a>
+        <a class="nav-item item" href="#contact">Contact</a>
+      </nav>
+      <a href="#header-sticky-wrapper"><img src="img/soround.png" alt="site logo"></a>
     </div>
+  </header>
 
-
-
-
-    <!-- Contact
-    ================================================== -->
-    <div id="contact"></div>
-
-    <section class="contact title">
-        <div class="wrapper_contact">
-            <div class="container-fluid">
-                <h2>Contact Me</h2>
-                <br />
-                <br />
-                <div class="row">
-                    <div class="col-md-6">
-                        <form>
-                            <div class="form-group">
-                                <input type="text" class="form-custom" id="name" placeholder="Name">
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-custom" id="email" placeholder="Email Address">
-                            </div>
-                            <div class="form-group">
-                                <input type="tel" class="form-custom" id="phone" placeholder="Phone Number">
-                            </div>
-                            <div class="form-group">
-                                <textarea type="text" id="message" placeholder="Message" rows="3"></textarea>
-                            </div>
-                            <a href="mailto:stephan.orgiazzi@gmail.com"><button type="button" class="button send">Send</button></a>
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                        </form>
-                    </div>
-                    <div class="col-md-6 messenger">
-                        <p>
-                            Want to get in touch with me? Be it to request more info about myself or my experience, to ask for my resume, or even if you wanna grab a drink with me in Paris... just feel free to drop me a line anytime.
-                            <br />
-                            <br />I promise to reply A.S.A.P.
-                        </p>
-                    </div>
-                </div>
+  <section id="main">
+    <div class="main-wrapper">
+      <div class="phone">
+        <div class="phone-wrap">
+          <img src="img/iphonex.png" alt="phone image">
+          <div class="phone-content">
+            <div class="profile-pic">
+              <img src="img/profile.jpg" alt="profile picture">
+              <p>Stephan Orgiazzi,</p>
+              <p>Paris</p>
             </div>
-        </div>
-    </section>
-
-
-    <!-- Footer
-    ================================================== -->
-
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <img src="images/soround.png" />
-                    <p>
-                        Made with <span class="glyphicon glyphicon-heart"></span> and <span class="glyphicon glyphicon-headphones"></span> by Stephan Orgiazzi.
-                    </p>
-                    <h6>Stephan Orgiazzi &copy; 2016. All Rights Reserved.</h6>
-                </div>
+            <div class="message message-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
+            <div class="message2">
+            </div>
+          </div>
         </div>
-    </footer>
+      </div>
+      <div class="headline">
+        <h1>The Front-End Developer <br />You Need.</h1>
+        <p>Stephan is the front-end developer you need to help you build what you want, exactly the way you want.</p>
+        <a href="#contact"><button type="button" name="hire-button" class="btn">Hire Now</button></a>
+      </div>
+      <div class="arrow">
+        <a href="#features"><i class="material-icons">keyboard_arrow_down</i></a>
+      </div>
+    </div>
+  </section>
 
+  <section id="press">
+    <div class="press-wrapper">
+      <h2>Praised by the world’s top media</h2>
+      <div class="press-logos">
+        <img src="img/techcrunch.png" alt="techcrunch logo">
+        <img src="img/theverge.png" alt="theverge logo">
+        <img src="img/forbes.png" alt="forbes logo">
+        <img src="img/mashable.png" alt="mashable logo">
+        <img src="img/fastcompany.jpg" alt="fastcompany logo">
+        <img src="img/tmz.png" alt="tmz logo">
+      </div>
+    </div>
+  </section>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="jquery-2.1.4.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="smoothscroll.js"></script>
+  <section id="features">
+    <div class="features-wrapper">
+      <h2>Features</h2>
+      <div class="features-list">
+        <div class="front">
+          <div class="features-desc">
+            <h3>Full-Stack Development</h3>
+            <p>Seamless HTML5, CSS3 and JS ES6 coding skills, excellent knowledge of jQuery, Bootstrap, and good abilities in MySQL and PHP.</p>
+          </div>
+          <img src="img/screen1.png" alt="front-end development on laptop">
+        </div>
+        <div class="digital">
+          <div class="features-desc">
+            <h3>Digital Strategy</h3>
+            <p>Keynote expert. Market analysis, Benchmark, Brand equity, Consumer journey, Conversion funnel optimization, Web analytics...</p>
+          </div>
+          <img src="img/screen2.png" alt="keynote presentation on ipad">
+        </div>
+        <div class="pitch">
+          <div class="features-desc">
+            <h3>Start-Up Pitch Deck</h3>
+            <p>Pitch deck guru: Unique Value Proposition, Customer Acquisition, Data Analysis, Business Model, Roadmap...</p>
+          </div>
+          <img src="img/screen3.png" alt="keynote presentation">
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section id="testimonials">
+    <div class="testimonials-wrapper">
+      <h2>Testimonials</h2>
+      <div id="slider" class="slider">
+        <div class="slide">
+          <img src="img/mark.jpg" alt="mark zuckerberg photo">
+          <p>"Stephan is not only a brilliant developer, he's also a very cool dude! I see him as a younger version of me. But even cooler."</p>
+          <p>- Mark Zuckerberg, CEO of Facebook</p>
+        </div>
+        <div class="slide">
+          <img src="img/sundar.jpg" alt="sundar pichai photo">
+          <p>"Undoubtedly the most interesting man in the industry right now! His unconventional professional  background makes him a very valuable asset."</p>
+          <p>- Sundar Pichai, CEO of Google</p>
+        </div>
+        <div class="slide">
+          <img src="img/jessica.jpg" alt="jessica alba photo">
+          <p>"10/10, would marry!"</p>
+          <p>- Jessica Alba, CEO of The Honest Company</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section id="contact">
+    <div class="contact-wrapper">
+      <h2>Contact</h2>
+      <div class="contact-content">
+        <div class="form-wrapper">
+          <form action="index.html" method="post">
+            <input type="text" name="name" value="" placeholder="Name" />
+            <input type="email" name="email" value="" placeholder="Email Address" />
+            <input type="phone" name="phone" value="" placeholder="Phone Number" />
+            <textarea type="text" name="message" rows="3" placeholder="Message"></textarea>
+            <div class="submit-wrapper">
+              <button type="button" class="btn">Send</button>
+            </div>
+          </form>
+        </div>
+        <div class="contact-bubble-wrapper">
+          <div class="contact-bubble">
+            <p>Want to get in touch with me? Be it to request more info about myself or my experience, to ask for my resume, or even if you wanna grab a drink with me in Paris... just feel free to drop me a line anytime.</p>
+            <p>I promise to reply A.S.A.P.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <img src="img/soround.png" alt="site logo">
+    <p>Made with love and <i class="material-icons">music_note</i> by Stephan Orgiazzi.</p>
+    <a href="mailto:stephan.orgiazzi@gmail.com">stephan.orgiazzi@gmail.com</a>
+    <p>06 62 90 02 55</p>
+    <p>Stephan Orgiazzi &copy; 2017. All Rights Reserved.</p>
+  </footer>
+
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+  <script src="jquery.sticky.js"></script>
+  <script src="script.js"></script>
 </body>
-
 </html>
