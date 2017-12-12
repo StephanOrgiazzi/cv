@@ -397,6 +397,12 @@ a {
   color: rgba(0, 0, 0, 0.50);
 }
 
+@media (max-width: 361px) {
+  .message-bubble {
+    font-size: 0.63rem;
+  }
+}
+
 @media (min-width: 1025px) {
   .main-wrapper{
     padding: 0 2rem;
