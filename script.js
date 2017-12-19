@@ -60,7 +60,7 @@ function displayMessage2() {
   setTimeout(function(){
     $(".message2").removeClass("message-indicator").addClass("message-bubble").html("<p>I'm a developer with extensive practical experience in Digital Strategy. I like well-conceived UX/UI and beautiful code. Also a huge fan of Sci-Fi movies :)</p>");
     return;
-  }, 10400);
+  }, 8400);
 }
 
 function removeToggle() {
@@ -100,6 +100,33 @@ $(function() {
   smoothScroll();
   slider();
 
+  
+    //********** Form Submit ***********//
+  $("form").submit(function(event){
+    event.preventDefault();
+    $.ajax({
+      url: "https://formspree.io/watchdogs@getnada.com",
+      method: "POST",
+      data: {
+        name: $("#name").val(),
+        email: $("#email").val(),
+        phone: $("#phone").val(),
+        message: $("#message").val()
+      },
+      dataType: "json"
+    }).done(function(){
+      $("#name").val("");
+      $("#email").val("");
+      $("#phone").val("");
+      $("#message").val("");
+      $(".submit-wrapper").html("<h4>Thank You!</h4><p>Your email has been sent. I'll be in touch with you soon.</p>");
+      console.log("Success!");
+    }).fail(function(){
+      alert("Please enter valid input!");
+    });
+
+  });
+  
 
   //********** Responsive ***********//
   if (window.matchMedia("(min-width: 1025px)").matches) {
