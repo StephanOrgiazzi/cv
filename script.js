@@ -60,7 +60,7 @@ function displayMessage2() {
   setTimeout(function(){
     $(".message2").removeClass("message-indicator").addClass("message-bubble").html("<p>I'm a developer with extensive practical experience in Digital Strategy. I like well-conceived UX/UI and beautiful code. Also a huge fan of Sci-Fi movies :)</p>");
     return;
-  }, 8400);
+  }, 6400);
 }
 
 function removeToggle() {
