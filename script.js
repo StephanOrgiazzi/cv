@@ -106,7 +106,7 @@ $(function() {
   $("form").submit(function(event){
     event.preventDefault();
     $.ajax({
-      url: "https://formspree.io/watchdogs@getnada.com",
+      url: "https://formspree.io/stephan.orgiazzi@gmail.com",
       method: "POST",
       data: {
         name: $("#name").val(),
