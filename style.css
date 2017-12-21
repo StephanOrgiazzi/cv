@@ -265,7 +265,7 @@ a {
 
 .phone-wrap > img {
   margin: 2rem auto;
-  height: 80vh;
+  min-height: 80vh;
 }
 
 .phone-wrap {
