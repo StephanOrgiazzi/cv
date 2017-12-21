@@ -70,7 +70,7 @@ a {
   transform: translate(50px, 50px);
 }
 #toggle:checked ~ .nav .nav-item {
-  color: #EC7263;
+  color: black;
   letter-spacing: 0;
   height: 40px;
   line-height: 40px;
