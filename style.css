@@ -264,7 +264,7 @@ a {
 }
 
 .phone-wrap > img {
-  margin: 1rem auto;
+  margin: 2rem auto;
   height: 80vh;
 }
 
@@ -308,7 +308,7 @@ a {
   margin-left: 6%;
   border-radius: 20px 20px 20px 5px;
   text-align: left;
-  font-size: 0.73rem;
+  font-size: 0.83rem;
   font-weight: 600;
   padding: 0 10px;
   font-family: "Open Sans";
@@ -328,7 +328,7 @@ a {
   margin-left: 6%;
   border-radius: 20px 20px 20px 5px;
   text-align: left;
-  font-size: 0.73rem;
+  font-size: 0.83rem;
   font-weight: 600;
   padding: 15px;
   background-color: #E5E5EA;
@@ -425,6 +425,10 @@ a {
     height: 65vh;
   }
 
+  .message-bubble {
+    font-size: 75%;
+  }
+
   .headline {
     margin: 1rem 2rem;
     padding: 1rem;
@@ -512,12 +516,13 @@ a {
 }
 
 .features-list {
-  text-align: left;
+  text-align: justify;
 }
 
 .features-wrapper h3 {
   font-size: 40px;
   margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .front, .pitch {
@@ -687,7 +692,7 @@ form input:hover::placeholder, form textarea:hover::placeholder, form input:focu
 }
 
 .submit-wrapper {
-  height: 3rem;
+  min-height: 3rem;
   margin: 3rem 0;
 }
 
@@ -698,6 +703,14 @@ form input:hover::placeholder, form textarea:hover::placeholder, form input:focu
   border-radius: 5px 25px 25px 25px;
   padding: 0.5rem 1rem;
   width: auto;
+}
+
+form h4 {
+  margin-top: 2.5em;
+}
+
+form p {
+  margin: 2em 0;
 }
 
 @media (min-width: 1024px) {
@@ -716,6 +729,7 @@ form input:hover::placeholder, form textarea:hover::placeholder, form input:focu
   .form-wrapper {
     margin: 3rem;
   }
+
 }
 
 
@@ -729,9 +743,9 @@ footer {
 }
 
 footer a {
-text-decoration: none;
-color: #FFF;
-margin-top: -18px;
+  text-decoration: none;
+  color: #FFF;
+  margin-top: -18px;
 }
 
 footer img {
@@ -740,18 +754,13 @@ footer img {
   border-radius: 50%;
 }
 
-footer p:nth-of-type(2), footer a {
+footer p:nth-of-type(1), footer a {
   font-size: 75%;
   margin: 0.2rem 0;
   padding: 0;
 }
 
-footer p:nth-of-type(1) {
-  margin-bottom: 0;
-  padding: 0;
-}
-
-footer p:nth-of-type(3) {
+footer p:nth-of-type(2) {
   font-size: 68%;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
