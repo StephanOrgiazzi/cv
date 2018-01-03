@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="img/soround.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="style.css" />
+  <title>Stephan Front-End Developper</title>
+</head>
+<body>
+
+  <header id="header">
+    <div class="header-wrapper">
+      <input id="toggle" type="checkbox" name="toggle">
+      <label class="toggle-container" for="toggle">
+        <span class="button button-toggle toggle"></span>
+      </label>
+      <nav class="nav">
+        <a class="nav-item item" href="#header-sticky-wrapper">Home</a>
+        <a class="nav-item item" href="#features">Features</a>
+        <a class="nav-item item" href="#testimonials">Testimonials</a>
+        <a class="nav-item item" href="#contact">Contact</a>
+      </nav>
+      <a href="#header-sticky-wrapper"><img src="img/soround.png" alt="site logo"></a>
+    </div>
+  </header>
+
+  <section id="main">
+    <div class="main-wrapper">
+      <div class="phone">
+        <div class="phone-wrap">
+          <img src="img/iphonex.png" alt="phone image">
+          <div class="phone-content">
+            <div class="profile-pic">
+              <img src="img/prof.jpg" alt="profile picture">
+              <p>Stephan Orgiazzi,</p>
+              <p>Paris</p>
+            </div>
+            <div class="message message-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="message2">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="headline">
+        <h1>The Front-End Developer <br />You Need.</h1>
+        <p>Stephan is the front-end developer you need to help you build what you want, exactly the way you want.</p>
+        <a href="#contact"><button type="button" name="hire-button" class="btn">Hire Now</button></a>
+      </div>
+      <div class="arrow">
+        <a href="#features"><i class="material-icons">keyboard_arrow_down</i></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="press">
+    <div class="press-wrapper">
+      <h2>Praised by the world’s top media</h2>
+      <div class="press-logos">
+        <img src="img/techcrunch.png" alt="techcrunch logo">
+        <img src="img/theverge.png" alt="theverge logo">
+        <img src="img/forbes.png" alt="forbes logo">
+        <img src="img/mashable.png" alt="mashable logo">
+        <img src="img/fastcompany.jpg" alt="fastcompany logo">
+        <img src="img/tmz.png" alt="tmz logo">
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="features-wrapper">
+      <h2>Features</h2>
+      <div class="features-list">
+        <div class="front">
+          <div class="features-desc">
+            <h3>Full-Stack Development</h3>
+            <p>Seamless HTML5, CSS3 and JavaScript ES6 coding skills, excellent knowledge of jQuery, Bootstrap, and good abilities in MySQL and PHP.</p>
+          </div>
+          <img src="img/screen1.png" alt="front-end development on laptop">
+        </div>
+        <div class="digital">
+          <div class="features-desc">
+            <h3>Digital Strategy</h3>
+            <p>Keynote expert. Market analysis, Benchmark, Brand equity, Consumer journey, Conversion funnel optimization, Web analytics...</p>
+          </div>
+          <img src="img/screen2.png" alt="keynote presentation on ipad">
+        </div>
+        <div class="pitch">
+          <div class="features-desc">
+            <h3>Start-Up Pitch Deck</h3>
+            <p>Pitch deck guru: Unique Value Proposition, Customer Acquisition, Data Analysis, Business Model, Roadmap...</p>
+          </div>
+          <img src="img/screen3.png" alt="keynote presentation">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials">
+    <div class="testimonials-wrapper">
+      <h2>Testimonials</h2>
+      <div id="slider" class="slider">
+        <div class="slide">
+          <img src="img/mark.jpg" alt="mark zuckerberg photo">
+          <p>"Stephan is not only a brilliant developer, he's also a very cool dude! I see him as a younger version of me. But even cooler."</p>
+          <p>- Mark Zuckerberg, CEO of Facebook</p>
+        </div>
+        <div class="slide">
+          <img src="img/sundar.jpg" alt="sundar pichai photo">
+          <p>"Undoubtedly the most interesting man in the industry right now! His unconventional professional  background makes him a very valuable asset."</p>
+          <p>- Sundar Pichai, CEO of Google</p>
+        </div>
+        <div class="slide">
+          <img src="img/jessica.jpg" alt="jessica alba photo">
+          <p>"10/10, would marry!"</p>
+          <p>- Jessica Alba, CEO of The Honest Company</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="contact-wrapper">
+      <h2>Contact</h2>
+      <div class="contact-content">
+        <div class="form-wrapper">
+          <form method="POST">
+            <input type="text" name="name" id="name" placeholder="Name"/>
+            <input type="email" name="email" id="email" placeholder="Email Address" />
+            <input type="phone" name="phone" id="phone" placeholder="Phone Number (optional)" />
+            <textarea type="text" name="message" id=message rows="3" placeholder="Message"></textarea>
+            <div class="submit-wrapper">
+              <button type="submit" class="btn">Send</button>
+            </div>
+          </form>
+        </div>
+        <div class="contact-bubble-wrapper">
+          <div class="contact-bubble">
+            <p>Want to get in touch with me? Be it to request more info about myself or my experience, to ask for my resume, or even if you wanna grab a drink with me in Paris... just feel free to drop me a line anytime.</p>
+            <p>I promise to reply A.S.A.P.</p>
+          </div>
+        </div>
+      </div>
+      <div class="social-wrapper">
+        <a href="https://twitter.com/StephanOrgiazzi" target="_blank"><img src="img/twitter.png" alt="twitter logo"></a>
+        <a href="https://www.linkedin.com/in/orgiazzi/" target="_blank"><img src="img/linkedin.png" alt="linkedin logo"></a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <img src="img/soround.png" alt="site logo">
+    <br />
+    <a href="mailto:stephan.orgiazzi@gmail.com">stephan.orgiazzi@gmail.com</a>
+    <p>06 62 90 02 55</p>
+    <p>Stephan Orgiazzi &copy; <script>document.write(new Date().getFullYear())</script>. All Rights Reserved.</p>
+  </footer>
+
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+  <script src="jquery.sticky.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
