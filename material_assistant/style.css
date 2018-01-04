@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+* {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  margin: 0;
+}
+
+body {
+  background-color: #008FED;
+  font-family: 'Roboto', sans-serif;
+}
+
+
+
+/********** Weather Settings ***********/
+.overlay {
+  position: fixed;
+  background: #000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.weather-settings-wrapper {
+  background-color: #FFF;
+  color: black;
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  z-index: 2;
+}
+
+.weather-settings-content {
+  position: relative;
+  width: 12rem;
+  margin: 0 auto;
+      text-align: center;
+}
+
+.weather-settings-options {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+}
+
+.weather-settings-options i {
+  margin-right: 1rem;
+}
+
+.weather-settings-options:hover {
+  color: darkgrey;
+  cursor: pointer;
+}
+
+/********** Header ***********/
+header {
+  padding: 0.6em;
+  background-color: #0075C2;
+  color: white;
+  text-align: center;
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+
+/********** Cards Wrapper ***********/
+.cards-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1rem;
+  margin: 1rem;
+}
+
+@media all and (min-width: 650px) {
+  .cards-wrapper {
+    max-width: 600px;
+    margin: 1rem auto;
+  }
+}
+
+
+/********** Cards ***********/
+.card {
+  padding: 1rem;
+  background: #fff;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+
+/********** weather-card ***********/
+#weather-card {
+  max-height: 10em;
+}
+
+.card-title-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.2rem;
+}
+
+.material-icons:hover {
+  color: rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+}
+
+.temperature-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weather-status {
+  color: #8A8A8A;
+  font-size: 0.9rem;
+}
+
+#weather-card img {
+  width: 6rem;
+}
+
+.temperature {
+  font-size: 4rem;
+}
+
+
+/********** places-card ***********/
+.container {
+  margin-top: 1rem;
+}
+
+.places-wrapper {
+  margin-bottom: 3rem;
+}
+
+.places-wrapper a {
+  text-decoration: none;
+  color: black;
+}
+
+.places-photo img {
+  width: 100%;
+  max-width: 569px;
+  max-height: 410px;
+}
+
+.places-name {
+  font-size: 1.1rem;
+}
+
+.places-ratings {
+    display: flex;
+    justify-content:flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.places-ratings .material-icons {
+    width: 18px;
+    font-size: 18px;
+    color: #E7711B;
+}
+
+.open-now {
+  color: #5CB85C;
+  font-size: 0.9rem;
+}
+
+.not-open-now {
+  color: #C65C22;
+  font-size: 0.9rem;
+}

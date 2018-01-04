@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material Assistant</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Material Assistant</h1>
+  </header>
+
+  <section id="cards">
+    <div class="cards-wrapper">
+
+      <div id="weather-card" class="card">
+        <div class="weather-card-wrapper">
+          <div class="card-title-wrapper">
+            <p class="city title"></p>
+            <i class="material-icons card-button">more_vert</i>
+          </div>
+          <p class="weather-status"></p>
+          <div class="temperature-wrapper">
+            <div class="weather-img">
+            </div>
+            <div class="weather-temperature">
+              <p class="temperature"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <div id="places-card" class="card">
+        <p class="title">Restaurants nearby</p>
+        <div class="container">
+        </div>
+      </div>
+
+    </div>
+    </section>
+
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+    <script type="text/javascript" src="moment.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+  </html>
