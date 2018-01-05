@@ -253,7 +253,7 @@ a {
 
 }
 
-/***** Main *****/
+/***** hero *****/
 .phone {
   background: url("img/blur.jpg");
   background-position: top center;
@@ -400,7 +400,7 @@ a {
 }
 
 @media (min-width: 1025px) {
-  .main-wrapper{
+  .hero-wrapper{
     padding: 0 2rem;
     display: flex;
     flex-wrap: wrap;
@@ -532,8 +532,13 @@ a {
   color: #333;
 }
 
-.features-list {
-  text-align: justify;
+.features-list a {
+  font-size: 0.95rem;
+  color: rgb(0, 112, 201);
+}
+
+.features-list a:hover {
+  text-decoration: underline;
 }
 
 .features-wrapper h3 {
@@ -753,15 +758,22 @@ form p {
   align-items: center;
   justify-content: center;
   margin: 2rem;
-}
-
-.social-wrapper a img {
-  width: 50px;
-  margin: 0.5rem;
+  height: 3rem;
 }
 
 .social-wrapper a {
   outline: 0;
+  width: 54px;
+  margin: 0.5rem;
+}
+
+.social-wrapper a img {
+  height: 50px;
+}
+
+.social-wrapper a img:hover {
+  height: 52px;
+  transition: 0.15s ease-in-out;
 }
 
 @media (min-width: 1024px) {

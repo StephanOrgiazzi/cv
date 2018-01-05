@@ -1,40 +1,3 @@
-function smoothScroll() {
-  $('a[href*="#"]')
-  // Remove links that don't actually link to anything
-  .not('[href="#"]')
-  .click(function(event) {
-    // On-page links
-    if (
-      location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '')
-      &&
-      location.hostname == this.hostname
-    ) {
-      // Figure out element to scroll to
-      var target = $(this.hash);
-      target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-      // Does a scroll target exist?
-      if (target.length) {
-        // Only prevent default if animation is actually gonna happen
-        event.preventDefault();
-        $('html, body').animate({
-          scrollTop: target.offset().top
-        }, 600, function() {
-          // Callback after animation
-          // Must change focus!
-          var $target = $(target);
-          $target.focus();
-          if ($target.is(":focus")) { // Checking if the target was focused
-            return false;
-          } else {
-            $target.attr('tabindex','-1'); // Adding tabindex for elements not focusable
-            $target.focus(); // Set focus again
-          };
-        });
-      }
-    }
-  });
-}
-
 function typing() {
   setTimeout(function(){
     $(".message").removeClass("message-indicator").html("");
@@ -58,7 +21,7 @@ function typing2() {
 
 function displayMessage2() {
   setTimeout(function(){
-    $(".message2").removeClass("message-indicator").addClass("message-bubble").html("<p>I'm a developer with extensive practical experience in Digital Strategy. I like well-conceived UX/UI and beautiful code. Also a huge fan of Sci-Fi movies <i class='em em-sunglasses'></i></p>");
+    $(".message2").removeClass("message-indicator").addClass("message-bubble").html("<p>I'm a developer with extensive practical experience in Digital Strategy. I like well-conceived UX/UI and beautiful code. Also a huge fan of Sci-Fi movies <i class='em em-sunglasses'></i><i class='em em-popcorn'></i></p>");
     return;
   }, 7400);
 }
@@ -94,6 +57,10 @@ function formSuccess() {
   console.log("Success!");
 }
 
+function formError() {
+  alert("Error");
+}
+
 
 //********** $(document).ready() ***********//
 $(function() {
@@ -102,7 +69,6 @@ $(function() {
   displayMessage();
   typing2()
   displayMessage2();
-  smoothScroll();
   slider();
 
 
@@ -121,7 +87,8 @@ $(function() {
         digits: true
       },
       message: {
-        required: true
+        required: true,
+        minlength: 20
       }
     },
     submitHandler: function(form) {
@@ -135,7 +102,8 @@ $(function() {
           message: $("#message").val()
         },
         dataType: "json",
-        success: formSuccess
+        success: formSuccess,
+        error: formError
       })
     }
   });
