@@ -6,9 +6,21 @@ import ProjectCard from '../components/ProjectCard.astro';
 import WritingItem from '../components/WritingItem.astro';
 import Footer from '../components/Footer.astro';
 import { getCollection } from 'astro:content';
-import { toWritingItem } from '../utils/articles';
+import { formatDate, titleFromSlug } from '../utils/articles';
 
-const baseUrl = import.meta.env.BASE_URL;
+const withBase = (path: string) =>
+  new URL(path, new URL(import.meta.env.BASE_URL.replace(/\/?$/, '/'), Astro.site)).pathname;
+const stripMarkdown = (content: string) =>
+  content
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^#+\s+/gm, '')
+    .replace(/[*_~>-]/g, ' ')
+    .replace(/\|/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
 const projects = [
   {
     title: "revue",
@@ -16,7 +28,7 @@ const projects = [
     theme: "green",
     link: "https://github.com/StephanOrgiazzi/revue?tab=readme-ov-file",
     repo: "StephanOrgiazzi/revue",
-    imageSrc: `${baseUrl}projects/revue.png`,
+    imageSrc: withBase('projects/revue.png'),
     imageAlt: "Revue mobile app reading interface",
     imageFit: "contain",
     highlights: ["expo router", "react native", "ios + android"]
@@ -27,7 +39,7 @@ const projects = [
     theme: "blue",
     link: "https://github.com/StephanOrgiazzi/ironoxlint",
     repo: "StephanOrgiazzi/ironoxlint",
-    imageSrc: `${baseUrl}projects/ironoxlint-logo.svg?v=4`,
+    imageSrc: `${withBase('projects/ironoxlint-logo.svg')}?v=4`,
     imageAlt: "ironoxlint logo",
     imageClass: "ironoxlint-logo",
     imageFit: "contain",
@@ -38,7 +50,18 @@ const projects = [
 const articles = await getCollection('articles');
 const writing = articles
   .sort((a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0))
-  .map(toWritingItem);
+  .map((entry) => {
+    const title = entry.data.title ?? titleFromSlug(entry.id);
+    const fallbackExcerpt = stripMarkdown(entry.body ?? '').slice(0, 190).trim();
+
+    return {
+      title,
+      date: formatDate(entry.data.date)?.toUpperCase() || 'UNDATED',
+      excerpt: entry.data.excerpt ?? (fallbackExcerpt ? `${fallbackExcerpt}...` : ''),
+      link: withBase(`writing/${entry.id}/`),
+      badges: entry.data.badges ?? [],
+    };
+  });
 
 const latestArticle = writing[0];
 ---

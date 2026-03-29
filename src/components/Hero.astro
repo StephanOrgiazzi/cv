@@ -1,5 +1,6 @@
 ---
-const baseUrl = import.meta.env.BASE_URL;
+const withBase = (path: string) =>
+  new URL(path, new URL(import.meta.env.BASE_URL.replace(/\/?$/, '/'), Astro.site)).pathname;
 ---
 
 <section class="hero container">
@@ -14,7 +15,7 @@ const baseUrl = import.meta.env.BASE_URL;
       <span class="hero-intro">Hi, I'm Stephan.</span>
       <span class="hero-copy-muted">I work at&nbsp;</span>
       <a href="https://www.welcometothejungle.com/fr/companies/pmu/tech-1" target="_blank" class="company-logo">
-        <img src={`${baseUrl}pmu-logo.png`} alt="PMU.TECH Logo" />
+        <img src={withBase('pmu-logo.png')} alt="PMU.TECH Logo" />
       </a>
       <br />
       <span class="hero-copy-muted">I like to build cool apps and tools,</span>
