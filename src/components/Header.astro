@@ -5,9 +5,10 @@ interface NavLink {
   className?: string;
 }
 
+const baseUrl = import.meta.env.BASE_URL;
 const isWritingRoute = Astro.url.pathname.startsWith('/writing/');
 const navLinks: NavLink[] = isWritingRoute
-  ? [{ href: '/', label: 'HOME', className: 'nav-link-mobile-visible' }]
+  ? [{ href: baseUrl, label: 'HOME', className: 'nav-link-mobile-visible' }]
   : [
       { href: '#open-source', label: 'OPEN SOURCE' },
       { href: '#writing', label: 'WRITING' },
@@ -16,7 +17,7 @@ const navLinks: NavLink[] = isWritingRoute
 
 <header class="navbar">
   <div class="container navbar-inner">
-    <a href="/" class="logo">Stephan Orgiazzi</a>
+    <a href={baseUrl} class="logo">Stephan Orgiazzi</a>
     
     <nav class="nav">
       {navLinks.map(({ href, label, className = '' }) => (

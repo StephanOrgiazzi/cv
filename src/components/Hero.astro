@@ -1,4 +1,5 @@
 ---
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <section class="hero container">
@@ -13,7 +14,7 @@
       <span class="hero-intro">Hi, I'm Stephan.</span>
       <span class="hero-copy-muted">I work at&nbsp;</span>
       <a href="https://www.welcometothejungle.com/fr/companies/pmu/tech-1" target="_blank" class="company-logo">
-        <img src="/pmu-logo.png" alt="PMU.TECH Logo" />
+        <img src={`${baseUrl}pmu-logo.png`} alt="PMU.TECH Logo" />
       </a>
       <br />
       <span class="hero-copy-muted">I like to build cool apps and tools,</span>

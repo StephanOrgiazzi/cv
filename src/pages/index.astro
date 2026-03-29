@@ -8,6 +8,7 @@ import Footer from '../components/Footer.astro';
 import { getCollection } from 'astro:content';
 import { toWritingItem } from '../utils/articles';
 
+const baseUrl = import.meta.env.BASE_URL;
 const projects = [
   {
     title: "revue",
@@ -15,7 +16,7 @@ const projects = [
     theme: "green",
     link: "https://github.com/StephanOrgiazzi/revue?tab=readme-ov-file",
     repo: "StephanOrgiazzi/revue",
-    imageSrc: "/projects/revue.png",
+    imageSrc: `${baseUrl}projects/revue.png`,
     imageAlt: "Revue mobile app reading interface",
     imageFit: "contain",
     highlights: ["expo router", "react native", "ios + android"]
@@ -26,7 +27,7 @@ const projects = [
     theme: "blue",
     link: "https://github.com/StephanOrgiazzi/ironoxlint",
     repo: "StephanOrgiazzi/ironoxlint",
-    imageSrc: "/projects/ironoxlint-logo.svg?v=4",
+    imageSrc: `${baseUrl}projects/ironoxlint-logo.svg?v=4`,
     imageAlt: "ironoxlint logo",
     imageClass: "ironoxlint-logo",
     imageFit: "contain",
