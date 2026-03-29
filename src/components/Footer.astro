@@ -1,0 +1,82 @@
+---
+const year = new Date().getFullYear();
+const links = [
+  ['https://github.com/stephanorgiazzi', 'GITHUB'],
+  ['https://linkedin.com/in/orgiazzi', 'LINKEDIN'],
+  ['https://www.npmjs.com/~stephanorgiazzi', 'NPM'],
+];
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">STEPHAN ORGIAZZI</div>
+      <div class="footer-copyright">&copy; {year}</div>
+    </div>
+    
+    <div class="footer-right">
+      <nav class="footer-links">
+        {links.map(([href, label]) => (
+          <a href={href} target="_blank" rel="noopener noreferrer">{label}</a>
+        ))}
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 6rem 0 4rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 4rem;
+  }
+  
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  
+  .footer-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+  
+  .footer-copyright {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+  }
+  
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .footer-links a {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+  }
+  
+  .footer-links a:hover {
+    color: var(--text-color);
+  }
+  
+  @media (max-width: 640px) {
+    .footer-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2rem;
+    }
+    
+    .footer-links {
+      gap: 1.5rem;
+    }
+  }
+</style>

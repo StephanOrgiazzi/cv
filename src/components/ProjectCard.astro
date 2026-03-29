@@ -1,0 +1,287 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  theme: 'green' | 'blue' | 'red' | 'yellow';
+  link?: string;
+  repo?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  imageClass?: string;
+  imageFit?: 'cover' | 'contain';
+  imageSize?: 'normal' | 'small';
+  highlights?: string[];
+}
+
+const {
+  title,
+  description,
+  theme,
+  link = "#",
+  repo,
+  imageSrc,
+  imageAlt = `${title} repository visual`,
+  imageClass = '',
+  imageFit = 'cover',
+  imageSize = 'normal',
+  highlights = [],
+} = Astro.props;
+
+const visibleHighlights = highlights.slice(0, 2);
+const opensInNewTab = /^https?:\/\//.test(link);
+---
+
+<a
+  href={link}
+  class={`project-card theme-${theme}`}
+  target={opensInNewTab ? '_blank' : undefined}
+  rel={opensInNewTab ? 'noreferrer noopener' : undefined}
+>
+  <div class="card-visual">
+    {imageSrc ? (
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        class={`card-image ${imageClass} ${imageFit === 'contain' ? 'fit-contain' : 'fit-cover'} ${imageSize === 'small' ? 'size-small' : ''}`}
+        loading="lazy"
+      />
+    ) : (
+      <div class="card-image card-image-fallback" aria-hidden="true" />
+    )}
+  </div>
+
+  <div class="card-content">
+    <h3 class="card-title">{title}</h3>
+    <p class="card-desc">{description}</p>
+    <div class="card-meta">
+      {repo && <p class="repo-line">{repo}</p>}
+      {visibleHighlights.length > 0 && (
+        <ul class="card-highlights" aria-label={`${title} key technologies`}>
+          {visibleHighlights.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+  
+  <div class="card-footer">
+    <div class="btn-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+    </div>
+  </div>
+</a>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    padding: 0.9rem;
+    border-radius: 2rem;
+    min-height: 292px;
+    text-decoration: none;
+    color: var(--text-color);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(var(--text-color-rgb), 0.06);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 8px rgba(0, 0, 0, 0.04),
+      0 12px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  .card-visual {
+    position: relative;
+    border-radius: 1.1rem;
+    min-height: 92px;
+    overflow: hidden;
+    margin-bottom: 0.85rem;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    min-height: 92px;
+    display: block;
+  }
+
+  .fit-cover {
+    object-fit: cover;
+  }
+
+  .fit-contain {
+    object-fit: contain;
+    padding: 0;
+    background: transparent;
+  }
+
+  .size-small {
+    transform: scale(0.84);
+    transform-origin: center;
+  }
+
+  .card-image-fallback {
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.8), rgba(var(--text-color-rgb), 0.08));
+  }
+
+  .card-content {
+    padding: 0 0.58rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-meta {
+    margin-top: auto;
+    padding-top: 0.6rem;
+  }
+
+  .project-card:hover {
+    opacity: 1;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.06),
+      0 8px 16px rgba(0, 0, 0, 0.06),
+      0 24px 48px rgba(0, 0, 0, 0.1);
+  }
+  
+  .theme-green { background-color: var(--card-green); }
+  .theme-blue { background-color: var(--card-blue); }
+  .theme-red { background-color: var(--card-red); }
+  .theme-yellow { background-color: var(--card-yellow); }
+
+  .card-title {
+    font-size: 1.34rem;
+    font-weight: 900;
+    margin-bottom: 0.45rem;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  .btn-circle {
+    background-color: rgba(var(--text-color-rgb), 0.08);
+    border: 1px solid rgba(var(--text-color-rgb), 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .project-card:hover .btn-circle {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-desc {
+    font-size: 1.08rem;
+    color: var(--text-color);
+    opacity: 0.92;
+    line-height: 1.5;
+    margin-bottom: 0.58rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .repo-line {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: 0.4rem;
+  }
+
+  .card-highlights li {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.32rem;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--text-color-rgb), 0.15);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.12rem 0.48rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  
+  .card-footer {
+    margin-top: 0.65rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 0.5rem 0.35rem;
+  }
+
+  :global([data-theme='dark']) .card-highlights li {
+    background: rgba(15, 23, 42, 0.36);
+    border-color: rgba(203, 213, 225, 0.26);
+  }
+
+  :global([data-theme='dark']) .card-image.ironoxlint-logo {
+    filter:
+      brightness(4)
+      contrast(1)
+
+  }
+
+  /* Dark theme glassmorphism for project cards */
+  :global([data-theme='dark']) .project-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  :global([data-theme='dark']) .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--glass-shine);
+    pointer-events: none;
+  }
+
+  :global([data-theme='dark']) .project-card:hover {
+    opacity: 1;
+    box-shadow: var(--glass-shadow);
+  }
+
+  :global([data-theme='dark']) .btn-circle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  :global([data-theme='dark']) .project-card:hover .btn-circle {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  :global([data-theme='dark']) .card-highlights li {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 640px) {
+    .project-card {
+      min-height: 0;
+    }
+
+    .card-visual,
+    .card-image {
+      min-height: 84px;
+    }
+  }
+</style>

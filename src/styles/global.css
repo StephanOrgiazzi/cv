@@ -1,0 +1,252 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-color: #d5dee7;
+  --bg-color-rgb: 213, 222, 231;
+  --surface-color: #eef2f8;
+  --surface-muted-color: #f7f9fc;
+  --text-color: #1d2739;
+  --text-color-rgb: 29, 39, 57;
+  --text-secondary: #30425e;
+  --text-muted: #5a6982;
+  --border-color: #ced7e3;
+  --divider-color: #d8dfe9;
+  --accent-color: #ff8a1f;
+  --accent-secondary-color: #6279f2;
+  --overlay-color: #10182752;
+  --hero-icon-bg: #d6dfec;
+  --hero-icon-color: #223149;
+  --hero-image-shadow: 0 40px 80px rgba(43, 52, 69, 0.16);
+  --card-green: #c8efe2;
+  --card-blue: #dce7fb;
+  --card-red: #fadde2;
+  --card-yellow: #f6e3ba;
+  --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
+  --container-max-width: 1000px;
+  --section-spacing: 2rem;
+  --heading-color: #101a31;
+  --blockquote-bg: #f2ece3;
+  --blockquote-border: #ff8a1f;
+  --table-bg: #f7f9fc;
+  --table-header-bg: #eef2f8;
+  --table-header-text: #101a31;
+  --table-cell-text: #30425e;
+  --inline-code-bg: #f7f9fc;
+  --inline-code-text: #6279f2;
+  --code-bg: #eef2f8;
+  --code-text: #1d2739;
+  --link-color: #6279f2;
+}
+
+[data-theme='dark'] {
+  --bg-color: #121820;
+  --bg-color-rgb: 18, 24, 32;
+  --surface-color: #11171d;
+  --surface-muted-color: #1f2937;
+  --text-color: #ffffff;
+  --text-color-rgb: 255, 255, 255;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #ffffff1a;
+  --divider-color: #ffffff0a;
+  --accent-color: #ff8b1a;
+  --accent-secondary-color: #8f9cff;
+  --overlay-color: #000000bf;
+  --hero-icon-bg: #e2e8f0;
+  --hero-icon-color: #0f172a;
+  --hero-image-shadow: 0 40px 80px rgba(0, 0, 0, 0.45);
+  --card-green: #1f2937;
+  --card-blue: #1e293b;
+  --card-red: #0f172a;
+  --card-yellow: #11171d;
+  --heading-color: #ffffff;
+  --blockquote-bg: #1f2937;
+  --blockquote-border: #ff8b1a;
+  --table-bg: #0f172a;
+  --table-header-bg: #11171d;
+  --table-header-text: #ffffff;
+  --table-cell-text: #cbd5e1;
+  --inline-code-bg: #1f2937;
+  --inline-code-text: #8f9cff;
+  --code-bg: #1e293b;
+  --code-text: #ffffff;
+  --link-color: #ff8b1a;
+  
+  /* Glass effect variables */
+  --glass-bg: rgba(18, 24, 32, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-blur: blur(16px);
+  --glass-shine: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
+  --glow-accent: rgba(255, 138, 26, 0.15);
+  
+  /* Semi-transparent card colors for glass effect */
+  --card-green: rgba(31, 41, 55, 0.6);
+  --card-blue: rgba(30, 41, 59, 0.6);
+  --card-red: rgba(15, 23, 42, 0.6);
+  --card-yellow: rgba(17, 23, 29, 0.6);
+  --blockquote-bg: rgba(31, 41, 55, 0.5);
+  --inline-code-bg: rgba(31, 41, 55, 0.5);
+  --code-bg: rgba(30, 41, 59, 0.5);
+  --table-bg: rgba(15, 23, 42, 0.5);
+  --table-header-bg: rgba(17, 23, 29, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--heading-color);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding-inline: 1.5rem;
+}
+
+section {
+  padding: var(--section-spacing) 0;
+}
+
+.btn-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  cursor: pointer;
+}
+
+.btn-circle:hover {
+  background: var(--text-color);
+  color: var(--bg-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Premium typography refinements */
+p {
+  margin-bottom: 1.25em;
+  letter-spacing: 0.005em;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+small {
+  font-size: 0.875em;
+  letter-spacing: 0.01em;
+}
+
+strong, b {
+  font-weight: 600;
+}
+
+blockquote {
+  padding-left: 1.5rem;
+  border-left: 4px solid var(--blockquote-border);
+  background: var(--blockquote-bg);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+
+code {
+  font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  letter-spacing: -0.01em;
+}
+
+pre {
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+pre code {
+  font-size: 0.875em;
+  line-height: 1.7;
+}
+
+/* Subtle selection styling */
+::selection {
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Dark theme glass effects */
+[data-theme='dark'] .glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme='dark'] .glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--glass-shine);
+  pointer-events: none;
+}
+
+[data-theme='dark'] .glass-glow:hover {
+  box-shadow: var(--glass-shadow), 0 0 40px var(--glow-accent);
+}
+
+

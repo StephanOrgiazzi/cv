@@ -1,0 +1,162 @@
+---
+interface NavLink {
+  href: string;
+  label: string;
+  className?: string;
+}
+
+const isWritingRoute = Astro.url.pathname.startsWith('/writing/');
+const navLinks: NavLink[] = isWritingRoute
+  ? [{ href: '/', label: 'HOME', className: 'nav-link-mobile-visible' }]
+  : [
+      { href: '#open-source', label: 'OPEN SOURCE' },
+      { href: '#writing', label: 'WRITING' },
+    ];
+---
+
+<header class="navbar">
+  <div class="container navbar-inner">
+    <a href="/" class="logo">Stephan Orgiazzi</a>
+    
+    <nav class="nav">
+      {navLinks.map(({ href, label, className = '' }) => (
+        <a href={href} class={`nav-link ${className}`.trim()}>{label}</a>
+      ))}
+      
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="sun-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="0" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="24"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="0" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="24" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>
+        </span>
+        <span class="moon-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .navbar {
+    padding: 2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-color);
+  }
+  
+  .navbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+  
+  .nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .nav-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+  }
+  
+  .nav-link:hover {
+    color: var(--accent-color);
+  }
+  
+  @media (max-width: 640px) {
+    .nav-link:not(.nav-link-mobile-visible) {
+      display: none;
+    }
+  }
+  
+  .theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: var(--text-color);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+  
+  .theme-toggle:hover {
+    background: var(--text-color);
+    color: var(--bg-color);
+    border-color: var(--text-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sun-icon, .moon-icon {
+    position: absolute;
+    transition: opacity 0.3s ease;
+  }
+  
+  :global([data-theme='dark']) .sun-icon {
+    opacity: 1;
+  }
+  
+  :global([data-theme='dark']) .moon-icon {
+    opacity: 0;
+  }
+  
+  :global([data-theme='light']) .sun-icon {
+    opacity: 0;
+  }
+  
+  :global([data-theme='light']) .moon-icon {
+    opacity: 1;
+  }
+
+  /* Dark theme frosted glass navbar */
+  :global([data-theme='dark']) .navbar {
+    background: rgba(18, 24, 32, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  :global([data-theme='dark']) .theme-toggle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  :global([data-theme='dark']) .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  :global([data-theme='dark']) .nav-link:hover {
+    text-shadow: 0 0 20px var(--glow-accent);
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const setTheme = (theme: 'light' | 'dark') => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+  };
+
+  toggle?.addEventListener('click', () =>
+    setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'),
+  );
+</script>

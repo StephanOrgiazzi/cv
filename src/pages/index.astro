@@ -1,0 +1,253 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import WritingItem from '../components/WritingItem.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { toWritingItem } from '../utils/articles';
+
+const projects = [
+  {
+    title: "revue",
+    description: "Open source iOS and Android app that turns plain .md files into a focused, magazine-style reading experience.",
+    theme: "green",
+    link: "https://github.com/StephanOrgiazzi/revue?tab=readme-ov-file",
+    repo: "StephanOrgiazzi/revue",
+    imageSrc: "/projects/revue.png",
+    imageAlt: "Revue mobile app reading interface",
+    imageFit: "contain",
+    highlights: ["expo router", "react native", "ios + android"]
+  },
+  {
+    title: "ironoxlint",
+    description: "ironoxlint is a strict, opinionated linting setup that helps AI agents write maintainable, production-grade code.",
+    theme: "blue",
+    link: "https://github.com/StephanOrgiazzi/ironoxlint",
+    repo: "StephanOrgiazzi/ironoxlint",
+    imageSrc: "/projects/ironoxlint-logo.svg?v=4",
+    imageAlt: "ironoxlint logo",
+    imageClass: "ironoxlint-logo",
+    imageFit: "contain",
+    highlights: ["npx init cli", "oxlint + oxfmt", "agent-friendly rules"]
+  }
+];
+
+const articles = await getCollection('articles');
+const writing = articles
+  .sort((a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0))
+  .map(toWritingItem);
+
+const latestArticle = writing[0];
+---
+
+<Layout title="Stephan Orgiazzi - Software Engineer">
+  <Header />
+  
+  <main>
+    <Hero />
+
+    {latestArticle && (
+      <section class="latest-writing container">
+        <a href={latestArticle.link} class="latest-writing-card">
+          <p class="latest-label">LATEST ARTICLE</p>
+          {latestArticle.badges.length > 0 && (
+            <div class="latest-badges">
+              {latestArticle.badges.map((label) => (
+                <span class="latest-badge">{label}</span>
+              ))}
+            </div>
+          )}
+          <h2 class="latest-title">{latestArticle.title}</h2>
+          <p class="latest-excerpt">{latestArticle.excerpt}</p>
+          <p class="latest-meta">{latestArticle.date} - READ ARTICLE</p>
+        </a>
+      </section>
+    )}
+    
+    <section id="open-source" class="projects container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 class="section-title">OPEN SOURCE</h2>
+          <p class="section-subtitle">SELECTED WORKS AND EXPERIMENTS</p>
+        </div>
+      </div>
+      
+      <div class="project-grid">
+        {projects.map((p) => (
+          <ProjectCard {...p as any} />
+        ))}
+      </div>
+    </section>
+    
+    <section id="writing" class="writing container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 class="section-title">WRITING</h2>
+          <p class="section-subtitle">THOUGHTS ON CODE, ARCHITECTURE AND CRAFT</p>
+        </div>
+      </div>
+      
+      <div class="writing-list">
+        {writing.map((w) => (
+          <WritingItem {...w} />
+        ))}
+      </div>
+    </section>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<style>
+  main {
+    padding-top: 0;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  #open-source {
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  #open-source::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: var(--border-color);
+    margin-top: 4rem;
+  }
+
+  .latest-writing {
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .latest-writing-card {
+    display: block;
+    padding: 1.5rem 0 3.5rem;
+    border-bottom: 2px solid var(--border-color);
+    position: relative;
+  }
+
+  .latest-writing-card:hover .latest-title {
+    color: var(--accent-color);
+  }
+
+  .latest-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    opacity: 0.6;
+    margin-bottom: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .latest-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .latest-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.35rem;
+    border: 1px solid rgba(var(--text-color-rgb), 0.1);
+    border-radius: 999px;
+    padding: 0.15rem 0.65rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--bg-color);
+    background: var(--text-color);
+  }
+
+  .latest-title {
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+    font-weight: 900;
+    margin-bottom: 0.75rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .latest-excerpt {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.55;
+  }
+
+  .latest-meta {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+    color: var(--accent-color);
+  }
+  
+  .section-title {
+    display: inline-block;
+    position: relative;
+    font-size: 3.25rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.8rem;
+    line-height: 1;
+  }
+
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 72px;
+    height: 4px;
+    margin-top: 0.6rem;
+    border-radius: 999px;
+    background: var(--accent-color);
+  }
+  
+  .section-subtitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+  
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .writing-list {
+    margin-top: 1rem;
+  }
+
+  .writing-list > :global(.writing-item:first-child) {
+    border-top: none;
+    padding-top: 1rem;
+  }
+  
+  @media (max-width: 900px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .section-title {
+      font-size: 2.5rem;
+    }
+  }
+</style>
