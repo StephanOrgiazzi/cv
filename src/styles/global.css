@@ -37,13 +37,21 @@
   --code-bg: #eef2f8;
   --code-text: #1d2739;
   --link-color: #6279f2;
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.52);
+  --glass-shadow: 0 18px 40px rgba(58, 76, 107, 0.12);
+  --glass-blur: blur(18px);
+  --glass-shine: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 52%);
+  --glow-accent: rgba(98, 121, 242, 0.14);
+  --surface-highlight: rgba(255, 255, 255, 0.66);
+  --surface-shadow-soft: 0 12px 30px rgba(64, 82, 114, 0.1);
 }
 
 [data-theme='dark'] {
-  --bg-color: #121820;
-  --bg-color-rgb: 18, 24, 32;
-  --surface-color: #11171d;
-  --surface-muted-color: #1f2937;
+  --bg-color: #18212d;
+  --bg-color-rgb: 24, 33, 45;
+  --surface-color: #1b2634;
+  --surface-muted-color: #243244;
   --text-color: #ffffff;
   --text-color-rgb: 255, 255, 255;
   --text-secondary: #cbd5e1;
@@ -52,7 +60,7 @@
   --divider-color: #ffffff0a;
   --accent-color: #ff8b1a;
   --accent-secondary-color: #8f9cff;
-  --overlay-color: #000000bf;
+  --overlay-color: #000000a8;
   --hero-icon-bg: #e2e8f0;
   --hero-icon-color: #0f172a;
   --hero-image-shadow: 0 40px 80px rgba(0, 0, 0, 0.45);
@@ -74,7 +82,7 @@
   --link-color: #ff8b1a;
   
   /* Glass effect variables */
-  --glass-bg: rgba(18, 24, 32, 0.7);
+  --glass-bg: rgba(24, 33, 45, 0.68);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   --glass-blur: blur(16px);
@@ -223,7 +231,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Dark theme glass effects */
+[data-theme='light'] .glass-panel,
 [data-theme='dark'] .glass-panel {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -234,6 +242,7 @@ html {
   overflow: hidden;
 }
 
+[data-theme='light'] .glass-panel::before,
 [data-theme='dark'] .glass-panel::before {
   content: '';
   position: absolute;
@@ -245,6 +254,7 @@ html {
   pointer-events: none;
 }
 
+[data-theme='light'] .glass-glow:hover,
 [data-theme='dark'] .glass-glow:hover {
   box-shadow: var(--glass-shadow), 0 0 40px var(--glow-accent);
 }

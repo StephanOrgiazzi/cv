@@ -445,7 +445,7 @@ Each of these exists as a comment in a PR, a section in a wiki, or tribal knowle
 
 For architectural boundaries, `eslint-plugin-boundaries` goes further. It lets you declare which layers can import from which: UI, domain, infrastructure, shared, and turns every violation into an immediate, local error before it reaches review, before it reaches CI, before it propagates across the codebase.
 
-The heuristic is simple: every time a pattern appears more than twice in code review, ask whether it can become a lint rule. If yes, it probably should. **A recurring review comment is a lint rule waiting to exist**, and in an agentic workflow, a lint rule is considerably more reliable than a comment.
+Every time a pattern appears more than twice in code review, ask whether it can become a lint rule. If yes, it probably should. **A recurring review comment is a lint rule waiting to exist**, and in an agentic workflow, a lint rule is considerably more reliable than a comment.
 
 The ceiling here is not really technical. The more project-specific rules you encode, the more the agent's output reflects your actual codebase instead of statistical averages from training data. Each rule is another sensor. More sensors means better signal. Better signal usually means better output.
 
@@ -480,8 +480,6 @@ The paradox is that a **well-engineered codebase barely needs a `CLAUDE.md` at a
 The discipline harness engineering asks for is the same discipline good engineering has always asked for: **encode decisions so they outlive the people who made them, prefer deterministic enforcement over tribal knowledge, and close feedback loops early.**
 
 What has changed is where your attention goes. The agent handles the typing. Your job is to improve the environment it types into.
-
-The heuristic is simple: **the better your engineering, the better your agent.**
 
 ---
 

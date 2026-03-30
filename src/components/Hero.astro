@@ -142,23 +142,33 @@ const withBase = (path: string) =>
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: var(--hero-icon-bg);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(214, 223, 236, 0.9));
     color: var(--hero-icon-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(var(--text-color-rgb), 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.06),
-      0 4px 12px rgba(0, 0, 0, 0.06);
+      0 10px 22px rgba(88, 103, 131, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
   
   .social-icon:hover {
-    background: var(--text-color);
-    color: var(--bg-color);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(231, 237, 245, 0.96));
+    color: var(--text-color);
     box-shadow:
-      0 2px 6px rgba(0, 0, 0, 0.1),
-      0 8px 20px rgba(0, 0, 0, 0.1);
+      0 16px 28px rgba(88, 103, 131, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  }
+
+  :global([data-theme='dark']) .social-icon {
+    color: #1b2432;
+  }
+
+  :global([data-theme='dark']) .social-icon:hover {
+    color: #1b2432;
   }
 
   .social-icon-npm {

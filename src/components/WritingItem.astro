@@ -35,10 +35,25 @@ const { date, title, excerpt, link = "#", badges = [] } = Astro.props;
     border-left: 3px solid transparent;
     padding-left: 1.25rem;
     margin-left: -1.25rem;
+    border-radius: 1.5rem;
+    transition:
+      background 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.25s ease;
   }
 
   .writing-item:hover .writing-title {
     color: var(--accent-color);
+  }
+
+  :global([data-theme='light']) .writing-item:hover {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(238, 242, 248, 0.72));
+    border-top-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 16px 34px rgba(82, 100, 131, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    transform: translateY(-1px);
   }
   
   .writing-date {

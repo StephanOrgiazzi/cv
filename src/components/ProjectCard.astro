@@ -88,6 +88,8 @@ const opensInNewTab = /^https?:\/\//.test(link);
       0 1px 2px rgba(0, 0, 0, 0.04),
       0 4px 8px rgba(0, 0, 0, 0.04),
       0 12px 24px rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
 
   .card-visual {
@@ -139,15 +141,15 @@ const opensInNewTab = /^https?:\/\//.test(link);
   .project-card:hover {
     opacity: 1;
     box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.06),
-      0 8px 16px rgba(0, 0, 0, 0.06),
-      0 24px 48px rgba(0, 0, 0, 0.1);
+      0 12px 24px rgba(61, 78, 106, 0.12),
+      0 28px 56px rgba(61, 78, 106, 0.14);
+    transform: translateY(-2px);
   }
   
-  .theme-green { background-color: var(--card-green); }
-  .theme-blue { background-color: var(--card-blue); }
-  .theme-red { background-color: var(--card-red); }
-  .theme-yellow { background-color: var(--card-yellow); }
+  .theme-green { background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(200, 239, 226, 0.62)); }
+  .theme-blue { background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(220, 231, 251, 0.7)); }
+  .theme-red { background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(250, 221, 226, 0.68)); }
+  .theme-yellow { background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(246, 227, 186, 0.7)); }
 
   .card-title {
     font-size: 1.34rem;
@@ -158,15 +160,19 @@ const opensInNewTab = /^https?:\/\//.test(link);
   }
 
   .btn-circle {
-    background-color: rgba(var(--text-color-rgb), 0.08);
-    border: 1px solid rgba(var(--text-color-rgb), 0.1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.68);
+    box-shadow:
+      0 8px 18px rgba(87, 103, 130, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.84);
   }
 
   .project-card:hover .btn-circle {
-    background-color: var(--text-color);
-    color: var(--bg-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--text-color);
+    box-shadow:
+      0 14px 24px rgba(87, 103, 130, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.94);
   }
 
   .card-desc {
@@ -210,6 +216,7 @@ const opensInNewTab = /^https?:\/\//.test(link);
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
   
   .card-footer {
@@ -218,6 +225,17 @@ const opensInNewTab = /^https?:\/\//.test(link);
     justify-content: flex-end;
     align-items: center;
     padding: 0 0.5rem 0.35rem;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.1) 52%);
+    pointer-events: none;
   }
 
   :global([data-theme='dark']) .card-highlights li {
@@ -258,6 +276,7 @@ const opensInNewTab = /^https?:\/\//.test(link);
   }
 
   :global([data-theme='dark']) .btn-circle {
+    color: rgba(255, 255, 255, 0.72);
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -265,6 +284,7 @@ const opensInNewTab = /^https?:\/\//.test(link);
 
   :global([data-theme='dark']) .project-card:hover .btn-circle {
     background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
