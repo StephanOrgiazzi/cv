@@ -7,11 +7,10 @@ interface NavLink {
 
 const withBase = (path: string) =>
   new URL(path, new URL(import.meta.env.BASE_URL.replace(/\/?$/, '/'), Astro.site)).pathname;
-const isWritingRoute = Astro.url.pathname.startsWith('/writing/');
+const isWritingRoute = Astro.url.pathname.includes('/writing/');
 const navLinks: NavLink[] = isWritingRoute
-  ? [{ href: withBase(''), label: 'Home', className: 'nav-link-mobile-visible' }]
+  ? []
   : [
-      { href: withBase(''), label: 'Home', className: 'nav-link-mobile-visible' },
       { href: '#open-source', label: 'OPEN SOURCE' },
       { href: '#writing', label: 'WRITING' },
     ];
