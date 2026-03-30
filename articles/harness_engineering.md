@@ -428,10 +428,10 @@ A shared baseline is the starting point, not the destination. The highest-levera
 
 Every architectural decision that currently lives as team folklore is a lint rule waiting to exist:
 
-- Do not import the database layer from UI components.
-- Use the internal `httpClient` wrapper, not raw `fetch`.
-- The payments module cannot import from analytics.
-- We deprecated `moment`, use `date-fns`.
+- “Do not import the database layer from UI components.”
+- “Use the internal `httpClient` wrapper, not raw `fetch`.”
+- “The payments module cannot import from analytics.”
+- “We deprecated `moment`, use `date-fns`.”
 
 Each of these exists as a comment in a PR, a section in a wiki, or tribal knowledge in someone's head, all of which the agent will never reliably reach, and none of which survive team turnover. Turn them into rules, and they become part of the environment the agent operates inside.
 
