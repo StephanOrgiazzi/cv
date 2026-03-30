@@ -17,7 +17,11 @@ badges:
 
 You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. And it mostly works, but sometimes things can get a bit messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
 
-The usual reaction is to add more: more rules, more docs, more explicit prompts. That usually backfires. Most agent failures are **context-management failures**, and stuffing more content into the window usually makes things worst.
+The usual reaction is to add more: more rules, more docs, more explicit prompts. That usually decreases code quality: most agent failures are **context-management failures**, and stuffing more content into the window usually makes things worst.
+
+There is a more uncomfortable truth here: every layer you add to your harness, every rule in CLAUDE.md, every skill, every hook, is a **patch**. It compensates for something your codebase fails to communicate on its own. A well-structured module with consistent conventions and enforced boundaries does not need a paragraph of tribal knowledge explaining it, the agent can read it.
+That reframe matters because it changes what harness engineering is actually for. The goal is not to accumulate layers, but to make each one unnecessary, one decision at a time, by moving that decision into the codebase itself, where it becomes permanent, visible, and impossible to ignore.
+This article will come back to that idea at the end, but for now the layers are worth understanding precisely because they reveal where the gaps are.
 
 ## The core problem
 
@@ -35,24 +39,13 @@ The core execution model of an agent is an iterative loop:
   <span>Done or loop back</span>
 </div>
 
-At every step, the agent draws from its *context window*: a fixed-size buffer holding everything it currently "knows" about the session. Instructions, conversation history, file contents, and tool call results. When that buffer gets noisy or overloaded, the agent doesn't degrade cleanly. It starts making subtle mistakes.
+At every step, the agent draws from its *context window*: a fixed-size buffer holding everything it currently "knows" about the session, including instructions, conversation history, file contents, and tool call results. When that buffer gets noisy or overloaded, the agent doesn't degrade cleanly, it starts making subtle mistakes.
 
 **Wrong information in context is worse than missing information.** Useful signal gets buried under irrelevant content, and the agent stops separating the two reliably.
 
 ### The layered answer
 
-The solution isn't piling up more and more info in context. It's understanding that each tool in your setup has a different relationship to the context window, and designing your harness around that fact.
-
-Each layer controls when information enters the context window, how much it costs, and how reliably it behaves:
-
-| Layer     | When it loads                  | Context cost                        | Reliability                                      |
-| --------- | ------------------------------ | ----------------------------------- | ------------------------------------------------ |
-| Permanent | Always, every turn             | Fixed, predictable, usually cached  | High: never gated by model judgment              |
-| On-Demand | When invoked                   | Variable, on request                | Medium: depends on agent triggering it           |
-| System    | Never (runs outside context)   | Zero                                | Absolute: process-level enforcement              |
-| Feedback  | After action, as tool output   | Controlled                          | High: deterministic signals                      |
-
-The layers enforce a simple discipline: always-resident for what must always apply, on-demand for what is only needed occasionally, and outside-context for what must never be left to chance. **The harness is the set of tools, constraints, and mechanisms you put around an agent to guide and enforce how it behaves across those layers.**
+The answer is not more context, but a harness designed around how each tool interacts with the context window. **Your harness is the set of tools, constraints, and feedback loops that make those layers work together.**
 
 ## A simple mental model
 
@@ -89,14 +82,12 @@ The layers enforce a simple discipline: always-resident for what must always app
   </div>
 </div>
 
-If you want the article in one sentence, it is this: **put permanent guidance in permanent context, load specialized knowledge only when needed, enforce non-negotiables outside the model, and keep a strong verification loop after every action.**
+In one sentence: **keep essential guidance resident, load specialized knowledge only when needed, enforce non-negotiables outside the model, and verify after every action.** In practice, that means four design targets:
 
-That gives you four layers to design intentionally:
-
-1. **Permanent layer:** what should be available on every turn.
-2. **On-demand layer:** what should load only when the task calls for it.
-3. **System layer:** what should be enforced without trusting model judgment.
-4. **Feedback layer:** what should verify the result after execution.
+1. **Permanent:** what belongs in every turn.
+2. **On-demand:** what should load only when needed.
+3. **System:** what must be enforced without trusting the model.
+4. **Feedback:** what checks the result after execution.
 
 ---
 
@@ -104,7 +95,7 @@ That gives you four layers to design intentionally:
 
 This is the Markdown file at the root of your project that loads into the agent's context on every turn, without being explicitly invoked.
 
-The first instinct when setting one up is to write everything: architecture overview, folder structure, team conventions, library choices, onboarding notes. That instinct is worth resisting. **A permanent context file should be small, strict, and operational. If a rule is not worth enforcing on every single task, it probably does not belong here.**
+The first instinct when setting one up is to write everything: architecture overview, folder structure, team conventions, library choices, onboarding notes. That instinct is worth resisting. **A permanent context file should be small, strict, and operational.** If a rule is not worth enforcing on every single task, it probably does not belong here.
 
 ### Keep it short
 
@@ -122,7 +113,6 @@ Constraints that apply unconditionally and that the agent might not pick up from
 
 <div class="instruction-block">
 
-- “All exported functions must have explicit return types, no inference.”
 - “Always use pnpm, not npm.”
 
 </div>
@@ -133,8 +123,7 @@ Non-obvious traps specific to this codebase.
 
 <div class="instruction-block">
 
-- “The payments service uses a non-standard Redis cache abstraction layer. Do not refactor it to use `node-cache` or wrap with decorator caching or it will break session state synchronization.”
-- “We need to keep folder `/pointOfSaleOld` for backward compatibility. We will remove it once the feature flag is on.”
+- “We need to keep folder `/pointOfSaleOld` for backward compatibility. We will remove it once we'll turn the feature flag on.”
 - “The auth token lifecycle is per-session, not per-request. Storing it in a closure or `WeakMap` will cause stale-token bugs on long connections.”
 
 </div>
@@ -145,67 +134,68 @@ Help the agent get relevant context when API docs are not in training data by ro
 
 <div class="instruction-block">
 
-- “Prefer retrieval-led reasoning over pre-training-led reasoning for any Next.js 16 tasks using the `nextjs-best-practice` skill.”
-- “Prefer retrieval-led reasoning over pre-training-led reasoning when using the Convex API: always use WebSearch to get docs matching the specific version.”
+- “Prefer retrieval-led reasoning over pre-training-led reasoning when using the Expo SDK: always use WebSearch to get docs matching the specific version.”
 - “`business-logic` is a sibling repo you may need to navigate and edit when necessary (`cd ../business-logic`).”
 
 </div>
 
-*Note: in upcoming sections, you will see that most of these can be moved to the on-demand or system layer to improve context engineering further.*
+<p class="article-note"><em>Note: in upcoming sections, you will see that some of these can be moved to the on-demand or system layer to improve context engineering further.</em></p>
 
 ---
 
-## Layer 2: On-Demand tools (Skills, MCP, WebFetch, CLI)
+## Layer 2: On-Demand tools (Skills, MCP, WebSearch, CLI, Subagents)
 
 This layer covers everything the agent can reach for when needed, but that does not load automatically. These tools do different jobs, and treating them as interchangeable is a good way to get a messy setup.
 
 | Tool                   | What it does                                                | When to use it                                                      |
 | ---------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Skills**             | Packaged workflows the agent reads as a file                | Repeatable methodologies with defined steps, inputs, and outputs    |
-| **MCP**                | External service integrations with persistent state          | When the agent needs to act on stateful external systems            |
-| **Subagents**          | Spawned helper agents for scoped exploration/execution       | When the task can be decomposed into bounded subtasks or parallelized |
-| **WebFetch / WebSearch** | Real-time web access                                      | When the agent needs current info not in training data              |
-| **CLI**                | Shell commands via built-in tools                           | File manipulation, test running, build execution                    |
+| **Skills**             | Portable packages of instructions, scripts, and resources               | When the agent needs domain knowledge, best practices,  or procedural steps    |
+| **MCP**                | Structured tool access to authenticated or stateful external systems          | Structured tool access to authenticated or stateful external systems            |
+| **WebFetch / WebSearch** | Real-time web access                                      | When the agent needs up-to-date and precise info not in training data              |
+| **CLI**                | Direct execution through shell commands and installed command-line tools  | When the task is best handled through local commands, scripts, or developer tooling                   |
+| **Subagents**          | Spawned helper agents for scoped exploration or execution       | When the task can be decomposed into bounded subtasks or parallelized |
 
 ### Skills architecture
 
-A skill is not just a `.md` file. It is a **retrieval unit**: a self-contained directory that stays dormant until the agent's routing logic decides it is necessary. That lazy-loading model keeps context windows cleaner through **progressive disclosure**:
+Done well, skills are one of the most effective levers in a harness. They move specialized knowledge out of permanent context and into a retrieval model: the agent reaches for what it needs, when it needs it, rather than carrying everything at once. That keeps the main context window clean and focused. It also means that skill quality compounds: a well-written skill for a specific library or workflow delivers expert-level guidance precisely when it matters, without paying for it on every unrelated task. This is the fundamental argument for skills over a bloated `CLAUDE.md`: permanent context is a fixed overhead while skills are a dynamic, variable cost. You should, as much as you can and if it still makes sense, move your `AGENTS.md` / `CLAUDE.md` rules to dedicated skills.
+
+A skill is not just a `.md` file. It is a **retrieval unit**: a self-contained directory that implements this lazy-loading model in three parts:
 
 - **`SKILL.md` (required):** Contains YAML frontmatter (metadata) and Markdown instructions. The agent initially reads only the name and description. If it matches the user request, it opens the file for instructions.
 - **`scripts/` (optional):** Executable code (Bash, JS/TS, Python) that lets the agent perform actions the LLM cannot do natively.
 - **`references/` (optional):** Deep-dive documentation loaded only if the agent needs to look something up mid-task.
 
-### The three core skill types
+#### The three core skill types
 
 To keep a harness usable, categorize skills by **intent**.
 
-#### 1. Documentation and knowledge skills
+##### 1. Documentation and knowledge skills
 
 Even the most advanced models have a knowledge cutoff or lack project-specific context.
 
 - **Purpose:** Provide information the agent doesn't know or might misremember.
-- **Example:** If you use **Convex**, the agent might not know the API details because they may not be in training data.
-- **Solution:** [Convex Skills](https://github.com/get-convex/agent-skills/tree/main/skills)
+- **Example:** If you use **Expo SDK 55**, the agent might not know the API details because this specific API version may not be in training data.
+- **Solution:** [Expo Skills](https://expo.dev/expo-skills)
 
-#### 2. Behaviors and best practices
+##### 2. Behaviors and best practices
 
 LLMs tend to generate "average" code.
 
 - **Purpose:** Drive project-specific, expert-level implementation quality.
-- **Example:** A skill based on the React team's "You Might Not Need an Effect" best-practices article.
-- **Solution:** [React useEffect Skill](https://github.com/softaworks/agent-toolkit/blob/main/skills/react-useeffect/SKILL.md)
+- **Example:** A skill based on the React team's [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect) best-practices article.
+- **Solution:** [React useEffect Skill](https://github.com/softaworks/agent-toolkit/tree/main/skills/react-useeffect)
 
-#### 3. Functionality and tooling
+##### 3. Functionality and tooling
 
-This is the most underused skill type. It turns the agent from a conversational assistant into a **system operator**.
+This is the most underused skill type. It turns the agent from a conversational assistant into a system operator.
 
-- **Purpose:** Give the agent capabilities it doesn't have natively (for example, image generation, complex PDF parsing, browser interaction).
-- **Example:** A skill teaching the agent to use the browser with agent-browser.
-- **Solution:** [Browser Automation with agent-browser](https://github.com/vercel-labs/agent-browser/tree/main/skills/agent-browser)
+- **Purpose:** Give the agent capabilities it doesn't have natively, by bundling scripts that produce output the model alone cannot.
+- **Example:** A [codebase-visualizer](https://code.claude.com/docs/en/skills) skill that runs a bundled script to generate an interactive HTML tree of your project
+- **Why it matters:** Without the script, this is a prompt. With the script, it is a tool. That distinction is the entire point of this skill type.
 
-### Skill registry risks: bloat and security
+#### Skill registry risks: bloat and security
 
-It is tempting to install every best-practice skill you can find. It is usually a mistake.
+It is tempting to install every best-practice skill you can find, but it is usually a mistake.
 
 1. **Context bloat:** even with lazy loading, the agent still scans every installed skill description on every turn. If you have 50 skills, you have added 2,000+ tokens of routing noise to each prompt.
 2. **Prompt-injection risk:** a skill is an executable prompt. A malicious third-party skill can embed hidden instructions that alter agent behavior. **Always audit `SKILL.md` and any associated scripts before adding a skill to your harness.**
@@ -218,7 +208,7 @@ That matters in two main cases:
 
 #### 1. Authenticated integrations
 
-Some systems need a persistent, credentialed connection that a one-off shell command does not handle cleanly: Atlassian, GitHub, Context7, and others.
+Some systems need a persistent, credentialed connection that a one-off shell command does not handle cleanly: [Atlassian](https://github.com/atlassian/atlassian-mcp-server), [GitHub](https://github.com/github/github-mcp-server), [Context7](https://github.com/upstash/context7), and others.
 
 Manually managing tokens in shell environment variables or passing credentials as CLI flags is **fragile and error-prone**. MCP solves authentication once and exposes structured actions on top.
 
@@ -226,32 +216,30 @@ Manually managing tokens in shell environment variables or passing credentials a
 
 MCP is also the right tool when the agent needs to operate *inside* another system, not just query it.
 
-A good example is [Blender MCP](https://www.youtube.com/watch?v=FDRb03XPiRo). The agent is not just fetching data from Blender. It is driving the app, creating objects, modifying scenes, and reading results back. The state lives in Blender, not in the context window. MCP is the bridge.
+A good example is [Chrome DevTools MCP](https://developer.chrome.com/blog/chrome-devtools-mcp?hl=fr): the agent can open Chrome, inspect the live DOM and CSS, read console and network activity, simulate user flows, and record a performance trace through DevTools. It is not just fetching documentation about the page. It is operating inside a running browser session and reading the resulting state back. The state lives in Chrome, not in the context window, and MCP is the bridge.
 
-The same logic applies anywhere the agent pushes actions into an external system and that system must preserve state between those actions.
 
-MCP tools are usually not very token efficient, and they can get expensive fast.
-**If you do not need authentication or persistent external state, you probably do not need MCP. A skill usually solves the same problem with less overhead and less complexity.**
+MCP tools are usually not very token efficient, and they can get expensive fast. **If you do not need authentication or persistent external state, you probably do not need MCP.** A skill usually solves the same problem with less overhead and less complexity.
 
 ### WebSearch and WebFetch for retrieval
 
 These tools are native to most modern agents. They solve two problems:
 
-- **Knowledge cutoff:** a language model trains on a snapshot of the world at a specific date. For anything that changes, such as a new Next.js release, a revised Convex API, or a breaking change, the model does not know.
+- **Knowledge cutoff:** a language model trains on a snapshot of the world at a specific date. For anything that changes, such as a new Next.js release, a revised Expo SDK, or a breaking change, the model does not know.
 - **Precision errors:** even for stable APIs in training data, the model may generate plausible but incorrect details, such as wrong method signatures or invented edge-case behavior.
 
-*WebSearch* and *WebFetch* are the answer to both. Architecturally, they provide *retrieval on demand*: instead of trusting pre-training weights, the agent fetches **ground truth** from primary sources and reasons from there.
+`WebSearch` and `WebFetch` are the answer to both. Architecturally, they provide *retrieval on demand*: instead of trusting pre-training weights, the agent fetches **ground truth** from primary sources and reasons from there.
 
 Use them for:
 
-- **Novel or recent APIs:** your stack uses a library the model has little training exposure to, such as Convex, tRPC, Drizzle with the latest APIs, or Next.js App Router after v15. Use *WebFetch* on the official docs or changelog before coding.
-- **Breaking changes:** a package changed its API between versions and the model insists on obsolete syntax. Use *WebSearch* with the package name plus version number to find the migration guide.
-- **Obscure errors or edge cases:** you hit undocumented runtime behavior. Use *WebSearch* on the exact error message before trying a blind fix.
+- **Novel or recent APIs:** your stack uses a library the model has little training exposure to, such as Expo, tRPC, Prisma with the latest APIs, or Next.js App Router after v15. Use `WebFetch` on the official docs or changelog before coding.
+- **Breaking changes:** a package changed its API between versions and the model insists on obsolete syntax. Use `WebSearch` with the package name plus version number to find the migration guide.
+- **Obscure errors or edge cases:** you hit undocumented runtime behavior. Use `WebSearch` on the exact error message before trying a blind fix.
 - **Precision requirements for familiar APIs:** even well-known libraries benefit from retrieval when exactness matters, including specific TypeScript generics, configuration flags, or behavioral guarantees. Pre-training provides approximations; retrieval provides ground truth.
 
 This habit should be explicit in your `AGENTS.md`, `CLAUDE.md`, or skills: **prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters**. That shifts the default from *"the model probably knows"* to **"check first."**
 
-These tools do not solve everything. For integrations that require persistent authentication or stateful manipulation in an external system, MCP is still the right answer. But for read-only information retrieval, such as documentation, changelogs, API specifications, and precise reference details, *WebSearch* is lighter, more direct, and usually sufficient.
+These tools do not solve everything. For integrations that require persistent authentication or stateful manipulation in an external system, `MCP` is still the right answer. The same applies to **skills** when the agent needs a reusable workflow, local conventions, or a reliable way to combine tools in a repeatable sequence. Prefer a `skill` when the value is in *how* the work should be done. Prefer `WebSearch` or `WebFetch` when the value is in retrieving *current external facts*, such as documentation, changelogs, API specifications, and precise reference details. In practice: skills encode procedure, retrieval tools supply ground truth.
 
 ### CLI as the execution surface
 
@@ -265,15 +253,13 @@ Unix fundamentals (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) and core git work
 
 The second category is probably underused: CLIs you can install to extend your agent's capabilities, tools that are not part of the base toolchain but become available as soon as they are installed on the machine.
 
-A good example is `gh`, the official [GitHub CLI](https://cli.github.com/). `gh issue create`, `gh pr merge`, `gh run list`: the agent already knows these commands. No setup beyond installation. No configuration surface to maintain. And if necessary, the agent can discover what it needs on demand via `--help` and proceed.
+A good example is `gh`, the official [GitHub CLI](https://cli.github.com/). It unlocks direct access to GitHub operations from the shell. No setup beyond installation.
 
 The same logic applies across a broader tool set:
 
 - [`agent-browser`](https://github.com/vercel-labs/agent-browser) gives the agent the ability to control a headless browser from the command line, which is useful for scraping, end-to-end tests, or navigating a web UI during execution.
 - Cloud-provider CLIs such as [`AWS CLI`](https://github.com/aws/aws-cli) and [`Azure CLI`](https://github.com/Azure/azure-cli?wt.mc_id=developermscom) expose hundreds of operations the agent can chain directly, using syntax it already knows from training.
 - Custom CLIs built specifically for your infrastructure can expose internal operations behind an interface the agent can discover on demand via `--help`.
-
-That last point matters. A well-designed CLI is **self-documenting**: `--help` gives the agent enough to use it correctly, with almost no prior context cost. The capability shows up when needed, not before. Same lazy-loading idea as skills, just applied to tooling.
 
 When should you use CLI? If a tool has a mature CLI and the agent can use it from its own training as a starting point, **prefer the CLI**. MCP wins when the tool has no CLI, when authentication is too awkward to manage cleanly in shell, or when the workflow requires persistent state in an external system.
 
@@ -313,19 +299,19 @@ Where an `AGENT.md/CLAUDE.md` rule can be ignored, a hook is a **hard gate**.
 
 Unlike `AGENT.md/CLAUDE.md`, hooks do not live in the prompt. They only inject content into context when they fail. That makes hooks ideal for rules you **never want violated**, without paying an ongoing context cost.
 
-### Handler types
+#### Handler types
 
 Claude Code supports three handler types:
 
 | Type | What it does | When to use it |
 | --- | --- | --- |
-| `command` | Runs a shell script | 95% of cases - structural checks, enforcement, formatting |
+| `command` | Runs a shell script | Structural checks, enforcement, formatting |
 | `prompt` | Sends context to a model (`Haiku`) for judgment calls | When the decision requires interpretation, not a hard rule |
 | `agent` | Spawns a subagent with tool access | Deep verification that needs codebase exploration |
 
 Focus on `command` first. It is **deterministic**, fast, has no inference cost, and covers most enforcement needs.
 
-### Lifecycle events
+#### Lifecycle events
 
 Hooks attach to specific points in the agent's execution cycle. Claude Code exposes many; two matter most:
 
@@ -359,7 +345,7 @@ fi
 
 Use `PreToolUse` for **policy guards** and `PostToolUse` for **cleanup and feedback**.
 
-### Move hard rules out of prompt context
+#### Move hard rules out of AGENTS.md context
 
 Many rules that clutter `AGENT.md/CLAUDE.md` are actually enforcement candidates, not context candidates:
 
@@ -381,15 +367,11 @@ Moving enforcement rules out of permanent context and into hooks is **one of the
 
 This verification loop closes the agent action cycle. It is one of the most underbuilt layers in agentic setups, and one of the most important to get right.
 
-The agent can produce something, report success, and still be wrong. The feedback layer exists to catch that. Tests answer **the only question that matters**: *did this actually work?* Type checking catches structural breakage early. Linting enforces consistency without needing a human to step in every time. Together, these checks keep the codebase maintainable and high quality.
+The agent can produce something, report success, and still be wrong. The feature might work, but the code quality can be low. The feedback layer exists to catch that. Tests validate functional correctness, type checking catches structural breakage early and linting enforces consistency without needing a human to step in every time. Together, these checks keep the codebase maintainable and high quality and allow the agent to evolve more **autonomously**.
 
 ### Type checking
 
 `tsc --noEmit` is usually the fastest deterministic signal in a TypeScript stack. It knows your interfaces, exports, and function signatures. When the agent refactors a shared utility or changes the shape of a DTO, `tsc` reports the downstream breakage before tests or builds even start.
-
-```bash
-npx tsc --noEmit
-```
 
 #### Stricter rules are free signal
 
@@ -418,20 +400,24 @@ An agent that writes *"average" code* is often an agent operating without enough
 
 #### The philosophy of strict baselines
 
-Before writing custom rules, start with a strict baseline that treats lint errors as failures, not suggestions. The goal is to avoid warning fatigue. A strict baseline catches a whole class of LLM-shaped mistakes — unnecessary assertions, overly broad error handling, sloppy generics, missing exhaustive checks — right when they appear. Quality becomes a property of the environment, not something you beg for in a prompt.
+Before writing custom rules, start with a strict baseline that treats lint errors as failures, not warnings. A strict baseline catches a whole class of LLM-shaped mistakes like unnecessary assertions, overly broad error handling, sloppy generics, barrel imports, missing exhaustive checks, etc... right when they appear. Quality then becomes a property of the environment, not something you have to ask for in a new prompt.
 
 [Ultracite](https://www.ultracite.ai/) is a good example of this philosophy. It is a highly opinionated lint preset that bundles hundreds of rules across TypeScript, React, accessibility, imports, and code quality, pre-tuned to be strict without being noisy. Whether you adopt Ultracite itself or [assemble your own equivalent](https://github.com/StephanOrgiazzi/ironoxlint), the principle is the same: a strict baseline replaces tedious back-and-forth with the agent and gives you high signal-to-noise enforcement out of the box.
 
 #### Project-specific rules are the real leverage
 
-A shared baseline is the starting point, not the destination. The highest-leverage linting work is the rules you write yourself, specific to your codebase, your domain, and your team's accumulated knowledge.
+A shared baseline is a good starting point, but the highest-leverage linting work is the rules you write yourself, specific to your codebase, your domain, and your team's accumulated knowledge.
 
 Every architectural decision that currently lives as team folklore is a lint rule waiting to exist:
 
-- “Do not import the database layer from UI components.”
-- “Use the internal `httpClient` wrapper, not raw `fetch`.”
-- “The payments module cannot import from analytics.”
-- “We deprecated `moment`, use `date-fns`.”
+<div class="instruction-block">
+  <ul>
+    <li>“Do not import the database layer from UI components.”</li>
+    <li>“Use the internal `httpClient` wrapper, not raw `fetch`.”</li>
+    <li>“The payments module cannot import from analytics.”</li>
+    <li>“We deprecated `moment`, use `date-fns`.”</li>
+  </ul>
+</div>
 
 Each of these exists as a comment in a PR, a section in a wiki, or tribal knowledge in someone's head, all of which the agent will never reliably reach, and none of which survive team turnover. Turn them into rules, and they become part of the environment the agent operates inside.
 
@@ -450,13 +436,13 @@ For architectural boundaries, `eslint-plugin-boundaries` goes further. It lets y
 
 Every time a pattern appears more than twice in code review, ask whether it can become a lint rule. If yes, it probably should. **A recurring review comment is a lint rule waiting to exist**, and in an agentic workflow, a lint rule is considerably more reliable than a comment.
 
-The ceiling here is not really technical. The more project-specific rules you encode, the more the agent's output reflects your actual codebase instead of statistical averages from training data. Each rule is another sensor. More sensors means better signal. Better signal usually means better output.
+The more project-specific rules you encode, the more the agent's output reflects your actual codebase instead of statistical averages from training data. Each rule is another sensor. More sensors means better signal. Better signal usually means better output.
 
 ### Tests
 
 #### Tests as behavioral signal
 
-Tests are the most direct feedback signal in your harness. A type checker tells the agent the code is structurally valid. A linter tells it the code follows the rules. Tests tell it whether the code *does what it's supposed to do*.
+Tests are the most direct feedback signal in your harness. A type checker tells the agent the code is structurally valid, a linter tells it the code follows the rules, and tests tell it whether the code *does what it's supposed to do*.
 
 Writing tests used to be expensive and tedious, so teams settled for thin coverage and happy-path-only suites. The feedback loop was limited by how much pain people were willing to take on.
 
@@ -478,12 +464,20 @@ An agent has none of that. Every gap in your harness is a gap the agent will fal
 
 The paradox is that a **well-engineered codebase barely needs a `CLAUDE.md` at all**. Agents are strong pattern matchers. If architectural decisions show up consistently, import boundaries are enforced in lint rules, and modules follow the same conventions, the agent does not need the rules spelled out every time. It can read them from the environment.
 
-`CLAUDE.md` exists to compensate for gaps. Eliminate the gaps and you eliminate most of what the file needed to say.
+Manual context layer exists to compensate for gaps. Eliminate the gaps and you eliminate most of what the file needed to say.
 
 The discipline harness engineering asks for is the same discipline good engineering has always asked for: **encode decisions so they outlive the people who made them, prefer deterministic enforcement over tribal knowledge, and close feedback loops early.**
 
-What has changed is where your attention goes. The agent handles the typing. Your job is to improve the environment it types into.
+What has changed is where your attention goes: the agent handles the typing, and your job is to improve the environment it types into. The underrated promise of agentic development is not speed, but that a well-engineered codebase, under constant automated pressure, converges toward quality faster than any team ever could manually.
 
 ---
 
-*Sources: Vercel Engineering Blog, "AGENT.md/CLAUDE.md outperforms skills in our agent evals" (Jan 2026) · Gloaguen et al., "Evaluating AGENT.md/CLAUDE.md: Are Repository-Level Context Files Helpful for Coding Agents?" (arXiv:2602.11988, Feb 2026) · Tw93, "Claude Code Deep Dive: Architecture, Governance, and Engineering Practices" (Mar 2026)*
+## Sources
+
+- [AGENTS.md outperforms skills in our agent evals](https://vercel.com/blog/agents-md-outperforms-skills-in-our-agent-evals)
+- [Lessons from Building Claude Code: How We Use Skills ](https://x.com/trq212/status/2033949937936085378)
+- [Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding Agents?](https://arxiv.org/abs/2602.11988)
+- [Your AGENTS.md Is Just Band-Aid](https://x.com/elmd_/status/2025976479276806294)
+- [You Don’t Know Claude Code: Architecture, Governance, and Engineering Practices](https://x.com/HiTw93/status/2033181380432339045)
+- [You Don't Know AI Agents: Principles, Architecture, and Engineering Practices](https://x.com/HiTw93/status/2035527178419683540)
+- [Claude Code Documentation](https://code.claude.com/docs/en/)

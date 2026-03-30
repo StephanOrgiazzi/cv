@@ -30,11 +30,20 @@ const withBase = (path: string) =>
     <article class="article">
       <a href={`${withBase('')}#writing`} class="back-link">Back to homepage</a>
       {publishedDate && <p class="article-date">{publishedDate}</p>}
-      <Content />
+      <div class="article-content">
+        <Content />
+      </div>
     </article>
   </main>
 
   <Footer />
+
+  <script>
+    document.querySelectorAll('.article-content a[href]').forEach((link) => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+  </script>
 </Layout>
 
 <style is:global>
@@ -55,6 +64,8 @@ const withBase = (path: string) =>
     --subsection-space: 2.35rem;
     --block-space: 2.25rem;
     --major-block-space: 2.65rem;
+    --list-space: 0.4rem;
+    --list-item-gap: 0.15rem;
   }
 
   .article > * {
@@ -115,15 +126,19 @@ const withBase = (path: string) =>
     line-height: 1.35;
     margin: var(--subsection-space) 0 0.8rem;
     padding-left: 0.95rem;
-    border-left: 3px solid rgba(var(--text-color-rgb), 0.12);
+    border-left: 3px solid var(--accent-color);
   }
 
   .article h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    line-height: 1.45;
-    margin: 1.5rem 0 0.55rem;
+    display: inline-block;
+    font-size: 1.08rem;
+    font-weight: 750;
+    letter-spacing: 0.015em;
+    line-height: 1.4;
+    margin: 1.65rem 0 0.65rem;
+    padding-bottom: 0.22rem;
+    color: var(--heading-color);
+    border-bottom: 2px solid rgba(var(--text-color-rgb), 0.14);
   }
 
   .article h5,
@@ -152,6 +167,14 @@ const withBase = (path: string) =>
     margin-top: var(--flow-space);
   }
 
+  .article-content > * + * {
+    margin-top: var(--flow-space);
+  }
+
+  .article-content p + p {
+    margin-top: 1.15rem;
+  }
+
   .article :is(h1, h2, h3, h4, h5, h6) + :is(p, ul, ol, blockquote, table, pre, figure, .execution-loop, .context-layer-architecture) {
     margin-top: 0.7rem;
   }
@@ -168,20 +191,32 @@ const withBase = (path: string) =>
     margin-top: 1.15rem;
   }
 
-  .article :is(p, ul, ol) + :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture) {
+  .article p + :is(ul, ol) {
+    margin-top: 0.8rem;
+  }
+
+  .article :is(p, ul, ol) + :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture, .instruction-block) {
     margin-top: var(--block-space);
   }
 
-  .article :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture) + :is(p, ul, ol) {
+  .article :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture, .instruction-block) + :is(p, ul, ol) {
     margin-top: var(--block-space);
   }
 
-  .article :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture) + :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture) {
+  .article :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture, .instruction-block) + :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture, .instruction-block) {
     margin-top: var(--major-block-space);
   }
 
-  .article :is(h1, h2, h3, h4) + :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture) {
+  .article :is(h1, h2, h3, h4) + :is(table, pre, blockquote, figure, .execution-loop, .context-layer-architecture, .instruction-block) {
     margin-top: 1.05rem;
+  }
+
+  .article p + .instruction-block {
+    margin-top: 1.2rem;
+  }
+
+  .article .instruction-block + p {
+    margin-top: 1.2rem;
   }
 
   .article p:has(> img:only-child) {
@@ -202,13 +237,11 @@ const withBase = (path: string) =>
 
   .article .instruction-block {
     margin: 0;
-    padding: 1rem 1.1rem;
-    border-radius: 18px;
-    border: 1px solid rgba(var(--text-color-rgb), 0.1);
-    background:
-      linear-gradient(180deg, rgba(var(--text-color-rgb), 0.04), rgba(var(--text-color-rgb), 0.015)),
-      var(--surface-color);
-    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.07);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
   .article .instruction-block > ul {
@@ -236,12 +269,23 @@ const withBase = (path: string) =>
     bottom: 1rem;
     width: 4px;
     border-radius: 999px;
-    background: var(--accent-color);
+    background: rgba(var(--text-color-rgb), 0.18);
   }
 
   .article .instruction-block > ul > li > :first-child,
   .article .instruction-block > ul > li > :first-child strong {
     color: var(--heading-color);
+  }
+
+  .article .article-note {
+    margin-top: 1.6rem;
+    color: var(--accent-color);
+  }
+
+  .article .article-note strong,
+  .article .article-note em {
+    color: inherit;
+    font-weight: inherit;
   }
 
   .article .execution-loop {
@@ -351,12 +395,45 @@ const withBase = (path: string) =>
 
   .article ul,
   .article ol {
-    padding-left: 1.7rem;
+    padding-left: 1.45rem;
+    line-height: 1.62;
   }
 
   .article li {
-    margin-bottom: 1rem;
-    line-height: 1.85;
+    margin-bottom: var(--list-item-gap);
+    padding-left: 0.18rem;
+    line-height: 1.62;
+  }
+
+  .article li:last-child {
+    margin-bottom: 0;
+  }
+
+  .article ol {
+    margin-left: 0.15rem;
+    padding-left: 1.55rem;
+  }
+
+  .article ol > li::marker {
+    color: var(--heading-color);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .article ol > li + li {
+    margin-top: var(--list-space);
+  }
+
+  .article ol > li > :is(p, ul, ol) {
+    margin-top: 0.5rem;
+  }
+
+  .article ul > li + li {
+    margin-top: var(--list-space);
+  }
+
+  .article li > :is(p, ul, ol):last-child {
+    margin-bottom: 0;
   }
 
   .article a {
@@ -392,11 +469,11 @@ const withBase = (path: string) =>
 
   .article strong {
     color: var(--heading-color);
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .article em {
-    color: var(--accent-secondary-color);
+    color: inherit;
     font-style: italic;
   }
 
@@ -558,11 +635,8 @@ const withBase = (path: string) =>
   }
 
   [data-theme='dark'] .article .instruction-block {
-    border-color: rgba(255, 255, 255, 0.1);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
-      #101821;
-    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.24);
+    background: transparent;
+    box-shadow: none;
   }
 
   [data-theme='dark'] .article .instruction-block > ul > li {
@@ -571,7 +645,7 @@ const withBase = (path: string) =>
   }
 
   [data-theme='dark'] .article h3 {
-    border-left-color: rgba(255, 255, 255, 0.18);
+    border-left-color: var(--accent-color);
   }
 
   .article figure {
@@ -600,6 +674,8 @@ const withBase = (path: string) =>
       --subsection-space: 1.9rem;
       --block-space: 1.7rem;
       --major-block-space: 2rem;
+      --list-space: 0.34rem;
+      --list-item-gap: 0.12rem;
     }
 
     .article > * {
@@ -621,8 +697,8 @@ const withBase = (path: string) =>
     }
 
     .article .instruction-block {
-      padding: 0.85rem;
-      border-radius: 16px;
+      padding: 0;
+      border-radius: 0;
     }
 
     .article .instruction-block > ul > li {
