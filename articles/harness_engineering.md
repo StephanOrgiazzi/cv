@@ -120,35 +120,36 @@ Three kinds of content are worth keeping:
 
 Constraints that apply unconditionally and that the agent might not pick up from context alone.
 
-```text
-All exported functions must have explicit return types, no inference.
+<div class="instruction-block">
 
-Always use pnpm, not npm.
-```
+- “All exported functions must have explicit return types, no inference.”
+- “Always use pnpm, not npm.”
+
+</div>
 
 #### Gotchas
 
 Non-obvious traps specific to this codebase.
 
-```text
-The payments service uses a non-standard Redis cache abstraction layer. Do not refactor it to use node-cache or wrap with Decorator caching or it will break session state synchronization.
+<div class="instruction-block">
 
-We need to keep folder /pointOfSaleOld for backward compatibility. We will remove it once the feature flag is on.
+- “The payments service uses a non-standard Redis cache abstraction layer. Do not refactor it to use `node-cache` or wrap with decorator caching or it will break session state synchronization.”
+- “We need to keep folder `/pointOfSaleOld` for backward compatibility. We will remove it once the feature flag is on.”
+- “The auth token lifecycle is per-session, not per-request. Storing it in a closure or `WeakMap` will cause stale-token bugs on long connections.”
 
-The auth token lifecycle is per-session, not per-request. Storing it in a closure or WeakMap will cause stale-token bugs on long connections.
-```
+</div>
 
 #### Retrieval nudges
 
 Help the agent get relevant context when API docs are not in training data by routing to relevant skills, using web search, or looking into sibling repos.
 
-```text
-Prefer retrieval-led reasoning over pre-training-led reasoning for any Next.js 16 tasks using the nextjs-best-practice skill.
+<div class="instruction-block">
 
-Prefer retrieval-led reasoning over pre-training-led reasoning when using the Convex API: always use WebSearch to get docs matching the specific version.
+- “Prefer retrieval-led reasoning over pre-training-led reasoning for any Next.js 16 tasks using the `nextjs-best-practice` skill.”
+- “Prefer retrieval-led reasoning over pre-training-led reasoning when using the Convex API: always use WebSearch to get docs matching the specific version.”
+- “`business-logic` is a sibling repo you may need to navigate and edit when necessary (`cd ../business-logic`).”
 
-business-logic is a sibling repo you may need to navigate and edit when necessary (cd ../business-logic).
-```
+</div>
 
 *Note: in upcoming sections, you will see that most of these can be moved to the on-demand or system layer to improve context engineering further.*
 
@@ -362,11 +363,13 @@ Use `PreToolUse` for **policy guards** and `PostToolUse` for **cleanup and feedb
 
 Many rules that clutter `AGENT.md/CLAUDE.md` are actually enforcement candidates, not context candidates:
 
-```text
-Always use pnpm, not npm or yarn.
-Never manually edit files in the __generated__ directory.
-All commits must follow conventional commit format.
-```
+<div class="instruction-block">
+
+- “Always use pnpm, not npm or yarn.”
+- “Never manually edit files in the `__generated__` directory.”
+- “All commits must follow conventional commit format.”
+
+</div>
 
 These are hard constraints, not tribal knowledge. The use-pnpm rule becomes a `PreToolUse` hook inspecting every Bash command. The `__generated__` protection becomes a file-path check on `Write` operations. Commit-format enforcement runs on Bash tools invoking `git commit`.
 

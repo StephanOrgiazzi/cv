@@ -200,6 +200,50 @@ const withBase = (path: string) =>
     margin: 0;
   }
 
+  .article .instruction-block {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(var(--text-color-rgb), 0.1);
+    background:
+      linear-gradient(180deg, rgba(var(--text-color-rgb), 0.04), rgba(var(--text-color-rgb), 0.015)),
+      var(--surface-color);
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.07);
+  }
+
+  .article .instruction-block > ul {
+    list-style: none;
+    padding-left: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .article .instruction-block > ul > li {
+    position: relative;
+    margin-bottom: 0;
+    padding: 0.9rem 1rem 0.95rem 1.2rem;
+    border-radius: 14px;
+    border: 1px solid rgba(var(--text-color-rgb), 0.08);
+    background: rgba(var(--bg-color-rgb), 0.34);
+    line-height: 1.75;
+  }
+
+  .article .instruction-block > ul > li::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    bottom: 1rem;
+    width: 4px;
+    border-radius: 999px;
+    background: var(--accent-color);
+  }
+
+  .article .instruction-block > ul > li > :first-child,
+  .article .instruction-block > ul > li > :first-child strong {
+    color: var(--heading-color);
+  }
+
   .article .execution-loop {
     display: flex;
     flex-wrap: wrap;
@@ -513,6 +557,19 @@ const withBase = (path: string) =>
     box-shadow: 0 20px 42px rgba(0, 0, 0, 0.28);
   }
 
+  [data-theme='dark'] .article .instruction-block {
+    border-color: rgba(255, 255, 255, 0.1);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+      #101821;
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.24);
+  }
+
+  [data-theme='dark'] .article .instruction-block > ul > li {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
   [data-theme='dark'] .article h3 {
     border-left-color: rgba(255, 255, 255, 0.18);
   }
@@ -561,6 +618,16 @@ const withBase = (path: string) =>
       gap: 0.45rem 0.65rem;
       padding: 0.9rem 1rem;
       font-size: 0.8rem;
+    }
+
+    .article .instruction-block {
+      padding: 0.85rem;
+      border-radius: 16px;
+    }
+
+    .article .instruction-block > ul > li {
+      padding: 0.8rem 0.9rem 0.85rem 1rem;
+      border-radius: 12px;
     }
 
     .article pre {
