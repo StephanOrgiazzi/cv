@@ -154,7 +154,7 @@ business-logic is a sibling repo you may need to navigate and edit when necessar
 
 ---
 
-## Layer 2: On-emand tools (Skills, MCP, WebFetch, CLI)
+## Layer 2: On-Demand tools (Skills, MCP, WebFetch, CLI)
 
 This layer covers everything the agent can reach for when needed, but that does not load automatically. These tools do different jobs, and treating them as interchangeable is a good way to get a messy setup.
 
