@@ -15,11 +15,16 @@ badges:
 
 ## Why this matters
 
-You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. And it mostly works, but sometimes things can get a bit messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
+You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. And with the latest generation of models (like Opus 4.6 and GPT 5.4 as of March 2026), now able to produce high-quality code, it mostly works. But sometimes things can still get a bit messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
 
 The usual reaction is to add more: more rules, more docs, more explicit prompts. That usually decreases code quality: most agent failures are **context-management failures**, and stuffing more content into the window usually makes things worst.
 
-There is a more uncomfortable truth here: every layer you add to your harness, every rule in CLAUDE.md, every skill, every hook, is a **patch**. It compensates for something your codebase fails to communicate on its own. A well-structured module with consistent conventions and enforced boundaries does not need a paragraph of tribal knowledge explaining it, the agent can read it.
+
+<blockquote class="article-pullquote">
+  <p>Every rule added to <code>CLAUDE.md</code>, every skill, every hook, is a <strong>patch</strong>.</p>
+</blockquote>
+
+It compensates for something the codebase fails to communicate on its own. A well-structured module with consistent conventions and enforced boundaries does not need a paragraph of unwritten conventions explaining it, the agent can read it.
 That reframe matters because it changes what harness engineering is actually for. The goal is not to accumulate layers, but to make each one unnecessary, one decision at a time, by moving that decision into the codebase itself, where it becomes permanent, visible, and impossible to ignore.
 This article will come back to that idea at the end, but for now the layers are worth understanding precisely because they reveal where the gaps are.
 
@@ -45,7 +50,11 @@ At every step, the agent draws from its *context window*: a fixed-size buffer ho
 
 ### The layered answer
 
-The answer is not more context, but a harness designed around how each tool interacts with the context window. **Your harness is the set of tools, constraints, and feedback loops that make those layers work together.**
+The answer is not more context, but a harness designed around how each tool interacts with the context window.
+
+<blockquote class="article-pullquote">
+  <p>Your harness is the set of tools, constraints, and feedback loops that make those layers work together.</p>
+</blockquote>
 
 ## A simple mental model
 
@@ -462,13 +471,19 @@ What is new is the cost of not doing it. When a human engineer skips documentati
 
 An agent has none of that. Every gap in your harness is a gap the agent will fall through, quietly, on every task.
 
-The paradox is that a **well-engineered codebase barely needs a `CLAUDE.md` at all**. Agents are strong pattern matchers. If architectural decisions show up consistently, import boundaries are enforced in lint rules, and modules follow the same conventions, the agent does not need the rules spelled out every time. It can read them from the environment.
+The paradox is that:
+
+<blockquote class="article-pullquote">
+  <p>A well-engineered codebase barely needs a <code>CLAUDE.md</code> at all.</p>
+</blockquote>
+
+Agents are strong pattern matchers. If architectural decisions show up consistently, import boundaries are enforced in lint rules, and modules follow the same conventions, the agent does not need the rules spelled out every time. It can read them from the environment.
 
 Manual context layer exists to compensate for gaps. Eliminate the gaps and you eliminate most of what the file needed to say.
 
 The discipline harness engineering asks for is the same discipline good engineering has always asked for: **encode decisions so they outlive the people who made them, prefer deterministic enforcement over tribal knowledge, and close feedback loops early.**
 
-What has changed is where your attention goes: the agent handles the typing, and your job is to improve the environment it types into. The underrated promise of agentic development is not speed, but that a well-engineered codebase, under constant automated pressure, converges toward quality faster than any team ever could manually.
+What has changed is where your attention goes: the agent handles the typing, and your job is to improve the environment it types into. The underrated promise of agentic development is that a well-engineered codebase, under constant automated pressure, converges toward quality faster than any team ever could manually.
 
 ---
 

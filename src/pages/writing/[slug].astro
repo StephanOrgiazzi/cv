@@ -219,6 +219,54 @@ const withBase = (path: string) =>
     margin-top: 1.2rem;
   }
 
+  .article .article-pullquote {
+    position: relative;
+    margin-left: 0;
+    padding: 0.28rem 0 0.28rem 1.35rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-style: normal;
+    overflow: hidden;
+  }
+
+  .article .article-pullquote::before {
+    content: '';
+    position: absolute;
+    top: 0.24rem;
+    left: 0;
+    bottom: 0.24rem;
+    width: 2px;
+    border-radius: 999px;
+    background: rgba(var(--text-color-rgb), 0.12);
+  }
+
+  .article .article-pullquote p {
+    margin: 0;
+    max-width: 34rem;
+    color: var(--heading-color);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.16rem, 2.3vw, 1.4rem);
+    font-weight: 450;
+    line-height: 1.38;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .article .article-pullquote strong {
+    color: inherit;
+    font-weight: 700;
+  }
+
+  .article .article-pullquote code {
+    color: inherit;
+    background: transparent;
+    padding: 0;
+    font-size: 0.88em;
+    font-weight: inherit;
+  }
+
   .article p:has(> img:only-child) {
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -279,7 +327,7 @@ const withBase = (path: string) =>
 
   .article .article-note {
     margin-top: 1.6rem;
-    color: var(--accent-color);
+    color: var(--text-muted);
   }
 
   .article .article-note strong,
@@ -644,6 +692,14 @@ const withBase = (path: string) =>
     background: rgba(255, 255, 255, 0.03);
   }
 
+  [data-theme='dark'] .article .article-pullquote {
+    background: transparent;
+  }
+
+  [data-theme='dark'] .article .article-pullquote::before {
+    background: rgba(255, 255, 255, 0.14);
+  }
+
   [data-theme='dark'] .article h3 {
     border-left-color: var(--accent-color);
   }
@@ -704,6 +760,22 @@ const withBase = (path: string) =>
     .article .instruction-block > ul > li {
       padding: 0.8rem 0.9rem 0.85rem 1rem;
       border-radius: 12px;
+    }
+
+    .article .article-pullquote {
+      padding-left: 1.1rem;
+    }
+
+    .article .article-pullquote::before {
+      top: 0.2rem;
+      bottom: 0.2rem;
+    }
+
+    .article .article-pullquote p {
+      max-width: none;
+      padding-right: 0;
+      font-size: clamp(1.04rem, 4.7vw, 1.22rem);
+      line-height: 1.38;
     }
 
     .article pre {
