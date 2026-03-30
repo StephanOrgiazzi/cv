@@ -15,7 +15,7 @@ badges:
 
 ## Why this matters
 
-You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. It mostly works, but things get messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
+You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. And it mostly works, but sometimes things can get a bit messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
 
 The usual reaction is to add more: more rules, more docs, more explicit prompts. That usually backfires. Most agent failures are **context-management failures**, and stuffing more content into the window usually makes things worst.
 
