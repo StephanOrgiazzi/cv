@@ -2,8 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg-color: #d5dee7;
-  --bg-color-rgb: 213, 222, 231;
+  --bg-color: #d9e2eb;
+  --bg-color-rgb: 217, 226, 235;
   --surface-color: #eef2f8;
   --surface-muted-color: #f7f9fc;
   --text-color: #1d2739;
