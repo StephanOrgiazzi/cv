@@ -15,7 +15,7 @@ badges:
 
 ## Why this matters
 
-You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. And with the latest generation of models (like Opus 4.6 and GPT 5.4 as of March 2026), now able to produce high-quality code, it mostly works. But sometimes things can still get a bit messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
+You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. And with the latest generation of state of the art LLMs, now able to produce high-quality production code, it mostly works. But sometimes things can still get a bit messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
 
 The usual reaction is to add more: more rules, more docs, more explicit prompts. That usually decreases code quality: most agent failures are **context-management failures**, and stuffing more content into the window usually makes things worst.
 
@@ -159,7 +159,7 @@ This layer covers everything the agent can reach for when needed, but that does 
 | Tool                   | What it does                                                | When to use it                                                      |
 | ---------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------- |
 | **Skills**             | Portable packages of instructions, scripts, and resources               | When the agent needs domain knowledge, best practices,  or procedural steps    |
-| **MCP**                | Structured tool access to authenticated or stateful external systems          | Structured tool access to authenticated or stateful external systems            |
+| **MCP**                | External service integrations with persistent state          | Structured tool access to authenticated or stateful external systems            |
 | **WebFetch / WebSearch** | Real-time web access                                      | When the agent needs up-to-date and precise info not in training data              |
 | **CLI**                | Direct execution through shell commands and installed command-line tools  | When the task is best handled through local commands, scripts, or developer tooling                   |
 | **Subagents**          | Spawned helper agents for scoped exploration or execution       | When the task can be decomposed into bounded subtasks or parallelized |
@@ -239,14 +239,15 @@ These tools are native to most modern agents. They solve two problems:
 
 `WebSearch` and `WebFetch` are the answer to both. Architecturally, they provide *retrieval on demand*: instead of trusting pre-training weights, the agent fetches **ground truth** from primary sources and reasons from there.
 
-Use them for:
+Use them for anything that falls into these two buckets: knowledge cutoff (novel APIs, recent releases, breaking changes, migration guides) and precision (exact method signatures, configuration flags, behavioral guarantees for APIs the model nominally knows but might misremember).
 
-- **Novel or recent APIs:** your stack uses a library the model has little training exposure to, such as Expo, tRPC, Prisma with the latest APIs, or Next.js App Router after v15. Use `WebFetch` on the official docs or changelog before coding.
-- **Breaking changes:** a package changed its API between versions and the model insists on obsolete syntax. Use `WebSearch` with the package name plus version number to find the migration guide.
-- **Obscure errors or edge cases:** you hit undocumented runtime behavior. Use `WebSearch` on the exact error message before trying a blind fix.
-- **Precision requirements for familiar APIs:** even well-known libraries benefit from retrieval when exactness matters, including specific TypeScript generics, configuration flags, or behavioral guarantees. Pre-training provides approximations; retrieval provides ground truth.
+<div class="instruction-block">
 
-This habit should be explicit in your `AGENTS.md`, `CLAUDE.md`, or skills: **prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters**. That shifts the default from *"the model probably knows"* to **"check first."**
+- “Upgrade Storybook from v8 to v10.33 (latest). Don't just upgrade version, make necessary corresponding API changes in the codebase. Use WebSearch to get up to date docs”
+
+</div>
+
+This habit should be explicit in your prompts, your `AGENTS.md`, `CLAUDE.md`, or skills: **prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters**. That shifts the default from *"the model probably knows"* to **"check first."**
 
 These tools do not solve everything. For integrations that require persistent authentication or stateful manipulation in an external system, `MCP` is still the right answer. The same applies to **skills** when the agent needs a reusable workflow, local conventions, or a reliable way to combine tools in a repeatable sequence. Prefer a `skill` when the value is in *how* the work should be done. Prefer `WebSearch` or `WebFetch` when the value is in retrieving *current external facts*, such as documentation, changelogs, API specifications, and precise reference details. In practice: skills encode procedure, retrieval tools supply ground truth.
 
