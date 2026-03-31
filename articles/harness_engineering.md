@@ -9,7 +9,7 @@ badges:
 
 # Understanding Harness Engineering: A Simple Yet Deep Dive into Context-Layer Architecture for Agentic Development
 
-*For developers navigating between `AGENT.md/CLAUDE.md`, skills, hooks, MCP, and everything in between.*
+*For developers navigating between `AGENTS.md/CLAUDE.md`, skills, hooks, MCP, and everything in between.*
 
 ---
 
@@ -100,7 +100,7 @@ In one sentence: **keep essential guidance resident, load specialized knowledge 
 
 ---
 
-## Layer 1: Permanent context (`AGENT.md/CLAUDE.md`)
+## Layer 1: Permanent context (`AGENTS.md/CLAUDE.md`)
 
 This is the Markdown file at the root of your project that loads into the agent's context on every turn, without being explicitly invoked.
 
@@ -305,9 +305,9 @@ Permissions define what the agent is allowed to attempt: file-system access, net
 
 ### Hooks: deterministic enforcement
 
-Where an `AGENT.md/CLAUDE.md` rule can be ignored, a hook is a **hard gate**.
+Where an `AGENTS.md/CLAUDE.md` rule can be ignored, a hook is a **hard gate**.
 
-Unlike `AGENT.md/CLAUDE.md`, hooks do not live in the prompt. They only inject content into context when they fail. That makes hooks ideal for rules you **never want violated**, without paying an ongoing context cost.
+Unlike `AGENTS.md/CLAUDE.md`, hooks do not live in the prompt. They only inject content into context when they fail. That makes hooks ideal for rules you **never want violated**, without paying an ongoing context cost.
 
 #### Handler types
 
@@ -357,7 +357,7 @@ Use `PreToolUse` for **policy guards** and `PostToolUse` for **cleanup and feedb
 
 #### Move hard rules out of AGENTS.md context
 
-Many rules that clutter `AGENT.md/CLAUDE.md` are actually enforcement candidates, not context candidates:
+Many rules that clutter `AGENTS.md/CLAUDE.md` are actually enforcement candidates, not context candidates:
 
 <div class="instruction-block">
 
@@ -369,7 +369,7 @@ Many rules that clutter `AGENT.md/CLAUDE.md` are actually enforcement candidates
 
 These are hard constraints, not tribal knowledge. The use-pnpm rule becomes a `PreToolUse` hook inspecting every Bash command. The `__generated__` protection becomes a file-path check on `Write` operations. Commit-format enforcement runs on Bash tools invoking `git commit`.
 
-Moving enforcement rules out of permanent context and into hooks is **one of the highest-leverage cleanups you can make**. It keeps `AGENT.md/CLAUDE.md` focused on what genuinely needs reasoning context and reserves the system layer for what requires **absolute guarantees**.
+Moving enforcement rules out of permanent context and into hooks is **one of the highest-leverage cleanups you can make**. It keeps `AGENTS.md/CLAUDE.md` focused on what genuinely needs reasoning context and reserves the system layer for what requires **absolute guarantees**.
 
 ---
 
