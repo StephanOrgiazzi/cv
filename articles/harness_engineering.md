@@ -316,7 +316,7 @@ Claude Code supports three handler types:
 | Type | What it does | When to use it |
 | --- | --- | --- |
 | `command` | Runs a shell script | Structural checks, enforcement, formatting |
-| `prompt` | Sends context to a model (`Haiku`) for judgment calls | When the decision requires interpretation, not a hard rule |
+| `prompt` | Sends context to a model for judgment calls | When the decision requires interpretation, not a hard rule |
 | `agent` | Spawns a subagent with tool access | Deep verification that needs codebase exploration |
 
 Focus on `command` first. It is **deterministic**, fast, has no inference cost, and covers most enforcement needs.
