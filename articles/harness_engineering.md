@@ -472,11 +472,7 @@ What is new is the cost of not doing it. When a human engineer skips documentati
 
 An agent has none of that. Every gap in your harness is a gap the agent will fall through, quietly, on every task.
 
-The paradox is that:
-
-<blockquote class="article-pullquote">
-  <p>A well-engineered codebase barely needs a <code>CLAUDE.md</code> at all.</p>
-</blockquote>
+The paradox is that a well-engineered codebase barely needs CLAUDE.md at all.
 
 Agents are strong pattern matchers. If architectural decisions show up consistently, import boundaries are enforced in lint rules, and modules follow the same conventions, the agent does not need the rules spelled out every time. It can read them from the environment.
 
