@@ -464,7 +464,7 @@ That cost structure has changed. Describe the behavior, point the agent at the m
 
 There is one idea running through the whole article.
 
-A tight `CLAUDE.md` is just good documentation. Strict TypeScript configuration is what a solid engineer enforces on day one. Lint rules that encode architectural decisions are written institutional knowledge. Hooks that block destructive commands are guardrails a careful team should want anyway. Tests as a feedback loop are not some new insight. They are one of the oldest ideas in software quality.
+A tight `CLAUDE.md` is just good documentation. Strict TypeScript configuration is what good engineers try to enforce on every codebase. Lint rules that encode architectural decisions are written institutional knowledge. Hooks that block destructive commands are guardrails a careful team should want anyway. Tests as a feedback loop are not some new insight. They are one of the oldest ideas in software quality.
 
 ### Harness engineering is just good engineering
 
