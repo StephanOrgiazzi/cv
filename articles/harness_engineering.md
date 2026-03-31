@@ -1,6 +1,6 @@
 ---
 title: "Understanding Harness Engineering"
-date: "2026-03-26"
+date: "2026-03-29"
 excerpt: "A Simple Yet Deep Dive into Context-Layer Architecture for Agentic Development"
 badges:
   - "Long Read"
