@@ -47,7 +47,9 @@ const projects = [
   }
 ];
 
-const articles = await getCollection('articles');
+const articles = (await getCollection('articles')).filter(
+  (entry) => (entry.data.locale ?? 'en') === 'en',
+);
 const writing = articles
   .sort((a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0))
   .map((entry) => {

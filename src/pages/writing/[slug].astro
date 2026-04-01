@@ -7,15 +7,29 @@ import { formatDate, titleFromSlug } from '../../utils/articles';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles');
+  const defaultLocaleArticles = articles.filter((entry) => (entry.data.locale ?? 'en') === 'en');
 
-  return articles.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  return defaultLocaleArticles.map((entry) => {
+    const translationKey = entry.data.translationKey;
+    const frEntry = translationKey
+      ? articles.find(
+          (candidate) =>
+            candidate.id !== entry.id &&
+            candidate.data.translationKey === translationKey &&
+            candidate.data.locale === 'fr',
+        )
+      : undefined;
+
+    return {
+      params: { slug: entry.id },
+      props: { entry, frEntry },
+    };
+  });
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { entry, frEntry } = Astro.props;
+const { Content: EnglishContent } = await render(entry);
+const { Content: FrenchContent } = frEntry ? await render(frEntry) : { Content: null };
 const title = entry.data.title ?? titleFromSlug(entry.id);
 const publishedDate = formatDate(entry.data.date, 'long');
 const description = entry.data.excerpt ?? `Article by Stephan Orgiazzi: ${title}.`;
@@ -30,8 +44,21 @@ const withBase = (path: string) =>
     <article class="article">
       <a href={`${withBase('')}#writing`} class="back-link">Back to homepage</a>
       {publishedDate && <p class="article-date">{publishedDate}</p>}
+      {FrenchContent && (
+        <div class="article-language-switch" role="group" aria-label="Article language">
+          <button type="button" class="language-button is-active" data-lang-target="en">EN</button>
+          <button type="button" class="language-button" data-lang-target="fr">FR</button>
+        </div>
+      )}
       <div class="article-content">
-        <Content />
+        <div data-lang-panel="en">
+          <EnglishContent />
+        </div>
+        {FrenchContent && (
+          <div data-lang-panel="fr" hidden>
+            <FrenchContent />
+          </div>
+        )}
       </div>
     </article>
   </main>
@@ -42,6 +69,57 @@ const withBase = (path: string) =>
     document.querySelectorAll('.article-content a[href]').forEach((link) => {
       link.setAttribute('target', '_blank');
       link.setAttribute('rel', 'noopener noreferrer');
+    });
+
+    const buttons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>('.language-button'),
+    );
+    const panels = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-lang-panel]'),
+    );
+
+    const hasFrenchPanel = panels.some((panel) => panel.getAttribute('data-lang-panel') === 'fr');
+
+    const syncLanguage = (target: string, updateUrl = false) => {
+      const nextLang = target === 'fr' && hasFrenchPanel ? 'fr' : 'en';
+
+      buttons.forEach((candidate) => {
+        candidate.classList.toggle(
+          'is-active',
+          candidate.getAttribute('data-lang-target') === nextLang,
+        );
+      });
+
+      panels.forEach((panel) => {
+        panel.hidden = panel.getAttribute('data-lang-panel') !== nextLang;
+      });
+
+      document.documentElement.lang = nextLang;
+
+      if (updateUrl) {
+        const url = new URL(window.location.href);
+
+        if (nextLang === 'fr') {
+          url.searchParams.set('lang', 'fr');
+        } else {
+          url.searchParams.delete('lang');
+        }
+
+        window.history.replaceState({}, '', url);
+      }
+    };
+
+    const initialLang = new URL(window.location.href).searchParams.get('lang') ?? 'en';
+    syncLanguage(initialLang);
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const target = button.getAttribute('data-lang-target');
+
+        if (target) {
+          syncLanguage(target, true);
+        }
+      });
     });
   </script>
 </Layout>
@@ -90,6 +168,46 @@ const withBase = (path: string) =>
     margin-bottom: 2.9rem;
     font-size: 0.85rem;
     opacity: 0.65;
+  }
+
+  .article-language-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin-bottom: 1.7rem;
+    padding: 0.18rem 0.2rem;
+    border: 1px solid rgba(var(--text-color-rgb), 0.1);
+    border-radius: 999px;
+    background: rgba(var(--text-color-rgb), 0.025);
+  }
+
+  .language-button {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0.38rem 0.68rem;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      opacity 160ms ease;
+    opacity: 0.58;
+  }
+
+  .language-button:hover {
+    opacity: 1;
+  }
+
+  .language-button.is-active {
+    background: rgba(var(--text-color-rgb), 0.08);
+    color: var(--heading-color);
+    opacity: 1;
   }
 
   .article h1,
@@ -736,6 +854,10 @@ const withBase = (path: string) =>
 
     .article > * {
       scroll-margin-top: 5.5rem;
+    }
+
+    .article-language-switch {
+      margin-bottom: 1.35rem;
     }
 
     .article h2 {

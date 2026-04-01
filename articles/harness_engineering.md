@@ -5,6 +5,8 @@ excerpt: "A Simple Yet Deep Dive into Context-Layer Architecture for Agentic Dev
 badges:
   - "Long Read"
   - "Agentic Coding"
+locale: "en"
+translationKey: "harness-engineering"
 ---
 
 # Understanding Harness Engineering: A Simple Yet Deep Dive into Context-Layer Architecture for Agentic Development
@@ -15,17 +17,21 @@ badges:
 
 ## Why this matters
 
-You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. And with the latest generation of state of the art LLMs, now able to produce high-quality production code, it mostly works. But sometimes things can still get a bit messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
+You've set up Claude Code, added a few MCP servers, launched an `/init` command to generate a `CLAUDE.md`, and maybe dropped in some skills. With the latest generation of state-of-the-art LLMs now genuinely capable of producing high-quality production code, it mostly works.
 
-The usual reaction is to add more: more rules, more docs, more explicit prompts. That usually decreases code quality: most agent failures are **context-management failures**, and stuffing more content into the window usually makes things worst.
+But over time (more features, more repos, more edge cases), things can still get messy: the agent ignores skills, context fills up fast, and output quality degrades across long sessions.
+
+The usual reaction is to add more: more skills, more rules, more docs. Counterintuitively, that often decreases code quality. Most agent failures are **context-management failures**, and stuffing more content into the window usually makes things worse.
 
 
 <blockquote class="article-pullquote">
   <p>Every rule added to <code>CLAUDE.md</code>, every skill, every hook, is a <strong>patch</strong>.</p>
 </blockquote>
 
-It compensates for something the codebase fails to communicate on its own. A well-structured module with consistent conventions and enforced boundaries does not need a paragraph of unwritten conventions explaining it, the agent can read it.
+It compensates for something the codebase fails to communicate on its own. A well-structured module with consistent conventions and enforced boundaries does not need a paragraph of unwritten conventions explaining it: the agent can read it.
+
 That reframe matters because it changes what harness engineering is actually for. The goal is not to accumulate layers, but to make each one unnecessary, one decision at a time, by moving that decision into the codebase itself, where it becomes permanent, visible, and impossible to ignore.
+
 This article will come back to that idea at the end, but for now the layers are worth understanding precisely because they reveal where the gaps are.
 
 ## The core problem
@@ -91,7 +97,7 @@ The answer is not more context, but a harness designed around how each tool inte
   </div>
 </div>
 
-In one sentence: **keep essential guidance resident, load specialized knowledge only when needed, enforce non-negotiables outside the model, and verify after every action.** In practice, that means four design targets:
+In practice:
 
 1. **Permanent:** what belongs in every turn.
 2. **On-demand:** what should load only when needed.
@@ -108,7 +114,7 @@ The first instinct when setting one up is to write everything: architecture over
 
 ### Keep it short
 
-[Context files tend to *reduce* task-success rates compared to providing no repository context at all, while simultaneously increasing inference cost by over 20%](https://arxiv.org/abs/2602.11988). Auto-generated files (via `/init` or similar) are primary culprits: they force the agent to spend reasoning tokens on information it could infer directly from reading the code. Bloated, contradictory, or over-specified files turn useful signal into noise. Anthropic recommends staying under 200 lines.
+[`AGENTS.md/CLAUDE.md` tend to *reduce* task-success rates compared to providing no `AGENTS.md/CLAUDE.md` at all, while simultaneously increasing inference cost by over 20%](https://arxiv.org/abs/2602.11988). Auto-generated files (via `/init` or similar) are primary culprits: they force the agent to spend reasoning tokens on information it could infer directly from reading the code. Bloated, contradictory, or over-specified files turn useful signal into noise. Anthropic recommends staying under 200 lines.
 
 ### What belongs here
 
@@ -158,7 +164,7 @@ This layer covers everything the agent can reach for when needed, but that does 
 
 | Tool                   | What it does                                                | When to use it                                                      |
 | ---------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Skills**             | Portable packages of instructions, scripts, and resources               | When the agent needs domain knowledge, best practices,  or procedural steps    |
+| **Skills**             | Portable packages of instructions, scripts, and resources    | When the agent needs domain knowledge, best practices, or procedural steps    |
 | **MCP**                | External service integrations with persistent state          | Structured tool access to authenticated or stateful external systems            |
 | **WebFetch / WebSearch** | Real-time web access                                      | When the agent needs up-to-date and precise info not in training data              |
 | **CLI**                | Direct execution through shell commands and installed command-line tools  | When the task is best handled through local commands, scripts, or developer tooling                   |
@@ -166,7 +172,7 @@ This layer covers everything the agent can reach for when needed, but that does 
 
 ### Skills architecture
 
-Done well, skills are one of the most effective levers in a harness. They move specialized knowledge out of permanent context and into a retrieval model: the agent reaches for what it needs, when it needs it, rather than carrying everything at once. That keeps the main context window clean and focused. It also means that skill quality compounds: a well-written skill for a specific library or workflow delivers expert-level guidance precisely when it matters, without paying for it on every unrelated task. This is the fundamental argument for skills over a bloated `CLAUDE.md`: permanent context is a fixed overhead while skills are a dynamic, variable cost. You should, as much as you can and if it still makes sense, move your `AGENTS.md` / `CLAUDE.md` rules to dedicated skills.
+Done well, skills are one of the most effective levers in a harness. They move specialized knowledge out of permanent context and into a retrieval model: the agent reaches for what it needs, when it needs it, rather than carrying everything at once. That keeps the main context window clean and focused. It also means that skill quality compounds: a well-written skill for a specific library or workflow delivers expert-level guidance precisely when it matters, without paying for it on every unrelated task. This is the fundamental argument for skills over a bloated `CLAUDE.md`: permanent context is a fixed overhead while skills are a dynamic, variable cost. When it makes sense, move `AGENTS.md` / `CLAUDE.md` rules into dedicated skills.
 
 A skill is not just a `.md` file. It is a **retrieval unit**: a self-contained directory that implements this lazy-loading model in three parts:
 
@@ -239,8 +245,6 @@ These tools are native to most modern agents. They solve two problems:
 
 `WebSearch` and `WebFetch` are the answer to both. Architecturally, they provide *retrieval on demand*: instead of trusting pre-training weights, the agent fetches **ground truth** from primary sources and reasons from there.
 
-Use them for anything that falls into these two buckets: knowledge cutoff (novel APIs, recent releases, breaking changes, migration guides) and precision (exact method signatures, configuration flags, behavioral guarantees for APIs the model nominally knows but might misremember).
-
 <div class="instruction-block">
 
 - “Upgrade Storybook from v8 to v10.33 (latest). Don't just upgrade version, make necessary corresponding API changes in the codebase. Use WebSearch to get up to date docs”
@@ -267,11 +271,11 @@ A good example is `gh`, the official [GitHub CLI](https://cli.github.com/). It u
 
 The same logic applies across a broader tool set:
 
-- [`agent-browser`](https://github.com/vercel-labs/agent-browser) gives the agent the ability to control a headless browser from the command line, which is useful for scraping, end-to-end tests, or navigating a web UI during execution.
+- [`agent-browser`](https://github.com/vercel-labs/agent-browser) gives the agent the ability to control a headless browser from the command line, which is useful for testing, debugging, or navigating the web UI during execution.
 - Cloud-provider CLIs such as [`AWS CLI`](https://github.com/aws/aws-cli) and [`Azure CLI`](https://github.com/Azure/azure-cli?wt.mc_id=developermscom) expose hundreds of operations the agent can chain directly, using syntax it already knows from training.
 - Custom CLIs built specifically for your infrastructure can expose internal operations behind an interface the agent can discover on demand via `--help`.
 
-When should you use CLI? If a tool has a mature CLI and the agent can use it from its own training as a starting point, **prefer the CLI**. MCP wins when the tool has no CLI, when authentication is too awkward to manage cleanly in shell, or when the workflow requires persistent state in an external system.
+When should you use the CLI? If a tool has a mature CLI and the agent can use it from its own training as a starting point, **prefer the CLI**. MCP wins when the tool has no CLI, when authentication is too awkward to manage cleanly in shell, or when the workflow requires persistent state in an external system.
 
 ### Subagents as isolated workers
 
@@ -414,9 +418,26 @@ Before writing custom rules, start with a strict baseline that treats lint error
 
 [Ultracite](https://www.ultracite.ai/) is a good example of this philosophy. It is a highly opinionated lint preset that bundles hundreds of rules across TypeScript, React, accessibility, imports, and code quality, pre-tuned to be strict without being noisy. Whether you adopt Ultracite itself or [assemble your own equivalent](https://github.com/StephanOrgiazzi/ironoxlint), the principle is the same: a strict baseline replaces tedious back-and-forth with the agent and gives you high signal-to-noise enforcement out of the box.
 
+#### File and function size limits as architectural guardrails
+
+LLMs tend to produce large, monolithic files. A 200-line utility quickly becomes an 800-line file as the agent iterates. The problem is not just readability: performance degrades as context within a file grows. The model spends more tokens tracking internal references, local state, and nested logic, and less on the actual task which makes it harder to test, review, and maintain.
+
+You can solve this deterministically with built-in ESLint/OxLint rules that enforce size limits:
+
+```json
+{
+  "rules": {
+    "max-lines": ["error", { "max": 600, "skipBlankLines": true, "skipComments": true }],
+    "max-lines-per-function": ["error", { "max": 250, "skipBlankLines": true, "skipComments": true }]
+  }
+}
+```
+
+These constraints encode principles you would enforce as a developer anyway if you care about clean code architecture and patterns: composability, separation of concerns, and testable units. The difference is that a lint rule applies them automatically and immediately, enforcing deterministically what would otherwise require constant vigilance—without waiting for code review, without relying on the model's judgment in the moment. The agent adapts by producing smaller, more focused units from the start, and the codebase stays navigable as it grows.
+
 #### Project-specific rules are the real leverage
 
-A shared baseline is a good starting point, but the highest-leverage linting work is the rules you write yourself, specific to your codebase, your domain, and your team's accumulated knowledge.
+The highest-leverage linting work is the rules you write yourself, specific to your codebase, your domain, and your team's accumulated knowledge.
 
 Every architectural decision that currently lives as team folklore is a lint rule waiting to exist:
 
@@ -457,6 +478,8 @@ Tests are the most direct feedback signal in your harness. A type checker tells 
 Writing tests used to be expensive and tedious, so teams settled for thin coverage and happy-path-only suites. The feedback loop was limited by how much pain people were willing to take on.
 
 That cost structure has changed. Describe the behavior, point the agent at the module, and it can draft a test suite quickly. The practical implication is that **coverage gaps are now feedback-loop gaps**, and weak tests are bad signals. The agent will keep moving either way. If the suite does not clearly define correct behavior, nothing reliably catches drift when it happens.
+
+A strict baseline and high-quality tests create a virtuous circle: they become tangible anchors that guide the agent's next changes and let it evolve in the codebase with confidence.
 
 ---
 
