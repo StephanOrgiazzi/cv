@@ -1,7 +1,7 @@
 ---
-title: "Comprendre le Harness Engineering"
+title: "Harness Engineering"
 date: "2026-03-29"
-excerpt: "Une introduction simple mais profonde à la Context-Layer Architecture pour le développement agentique"
+excerpt: "La Context-Layer Architecture au service du développement agentique"
 badges:
   - "Long Read"
   - "Agentic Coding"
@@ -9,7 +9,7 @@ locale: "fr"
 translationKey: "harness-engineering"
 ---
 
-# Comprendre le Harness Engineering : plongée simple mais approfondie à la Context-Layer Architecture pour le développement agentique
+# Harness Engineering : la Context-Layer Architecture au service du développement agentique
 
 *Pour les développeurs qui naviguent entre `AGENTS.md/CLAUDE.md`, les skills, les hooks, MCP, et tout le reste.*
 
@@ -17,16 +17,16 @@ translationKey: "harness-engineering"
 
 ## Pourquoi c'est important
 
-Vous avez configuré Claude Code, ajouté quelques serveurs MCP, lancé une commande `/init` pour générer un `CLAUDE.md`, et peut-être même ajouté quelques skills. Et avec la dernière génération de LLM « state of the art », désormais vraiment capables de produire du code de qualité, cela fonctionne globalement bien la plupart du temps. Mais malgré cela, petit à petit, plus de nouvelles features son implémentées, plus les choses peuvent devenir bancales : l'agent ignore certains skills, le contexte se remplit trop vite, et la qualité des réponses et du code se dégrade.
+Vous avez configuré Claude Code, ajouté quelques serveurs MCP, lancé une commande `/init` pour générer un `CLAUDE.md`, et peut-être même ajouté quelques skills. Avec la dernière génération de LLM, ça fonctionne globalement bien la plupart du temps. Mais malgré cela, petit à petit, plus de nouvelles features sont implémentées, plus les choses peuvent devenir bancales : l'agent ignore certains skills, le contexte se remplit trop vite, et la qualité des réponses et du code se dégrade.
 
-La réaction habituelle consiste à en ajouter davantage : plus de skills, plus de règles, plus de documentation. En pourtant, bien que cela puisse sembler contre-intuitif, cela fait généralement baisser la qualité du code. La plupart des échecs de l'agent sont des **échecs de « context management »**, et entasser plus de contenu dans la fenêtre contextuelle aggrave en réalité souvent la situation.
+Le réflexe habituel est d'en ajouter davantage : plus de skills, plus de règles, plus de documentation. Et pourtant, même si cela peut sembler contre-intuitif, cela dégrade souvent la qualité du code. La plupart des ratés de l'agent sont des **échecs de « context management »**, et entasser du contenu dans la fenêtre de contexte aggrave généralement la situation.
 
 <blockquote class="article-pullquote">
   <p>Chaque règle ajoutée au <code>CLAUDE.md</code>, chaque skill, chaque hook, est un <strong>patch</strong>.</p>
 </blockquote>
 
-Ces règles compensent quelque chose que le codebase ne parvient pas à communiquer de lui-même. Un module bien structuré, avec des conventions cohérentes et des frontières bien posées, n'a pas besoin d'un paragraphe de conventions implicites pour être compris : l'agent peut le lire directement.
-Ce changement de perspective est important parce qu'il redéfinit ce à quoi sert réellement le harness engineering. Le but n'est pas d'accumuler des couches de règles, mais de rendre chacune superflue, une décision à la fois, en intégrant cette décision dans le codebase elle-même, là où elle devient permanente, visible et impossible à ignorer.
+Ces règles compensent quelque chose que la base de code ne parvient pas à communiquer d'elle-même. Un module bien structuré, avec des conventions cohérentes, n'a pas besoin d'un paragraphe de règles implicites pour être compris : l'agent peut le lire directement.
+Ce changement de paradigme est important parce qu'il redéfinit ce à quoi sert réellement le harness engineering. Le but n'est pas d'empiler des couches de règles, mais de rendre chacune superflue, une décision à la fois, en l'encodant dans la base de code elle-même, là où elle devient permanente, visible et impossible à ignorer.
 Cet article reviendra sur cette idée à la fin, mais pour l'instant, les couches de contexte méritent d'être comprises précisément parce qu'elles révèlent où se situent les lacunes.
 
 ## Le problème central
@@ -51,7 +51,7 @@ Le modèle d'exécution central d'un agent est une boucle itérative :
 
 ### La réponse en context-layers (ou "couches de contexte")
 
-La réponse n'est pas d'ajouter plus de contexte, mais un "harness", un "cadre", conçu autour de la façon dont chaque outil interagit avec la fenêtre contextuelle.
+La réponse n'est pas d'ajouter plus de contexte, mais de construire un harness (un cadre) pensé autour de la façon dont chaque outil interagit avec la fenêtre de contexte.
 
 <blockquote class="article-pullquote">
   <p>Le harness est l'ensemble des outils, contraintes et feedbacks qui font fonctionner ces couches de contexte ensemble.</p>
@@ -106,13 +106,13 @@ Il s'agit du fichier Markdown à la racine du projet qui est systématiquement c
 
 Le premier réflexe, quand on en met un en place, est d'écrire tout ce qui passe : vue d'ensemble de l'architecture, structure des dossiers, conventions d'équipe, choix des librairies, notes d'onboarding, etc... Il faut résister à ce réflexe. **Un fichier de contexte permanent doit être court, strict et opérationnel.** Si une règle ne vaut pas la peine d'être appliquée à chaque tâche, elle n'a probablement pas sa place ici.
 
-### Keept it short
+### Keep it short
 
 [Les fichiers `AGENTS.md/CLAUDE.md` ont tendance à *diminuer* le taux de réussite des tâches par rapport à l'absence totale de fichiers `AGENTS.md/CLAUDE.md`, tout en augmentant le coût d'inférence de plus de 20 %](https://arxiv.org/abs/2602.11988). Les fichiers auto-générés (via `/init` ou équivalent) sont souvent les premiers coupables : ils forcent l'agent à dépenser des tokens de raisonnement sur des informations qu'il pourrait déduire simplement en lisant le code. Des fichiers .md trop volumineux, contradictoires ou sur-spécifiés transforment l'info utile en bruit. Anthropic recommande d'ailleurs de se limiter à 200 lignes maximum.
 
 ### Ce qui doit être dans CLAUDE.md/AGENTS.md
 
-L'agent sait déjà lire votre codebase. Ce qui l'aide, c'est ce qu'il *ne peut pas* déduire du code : de la connaissance tacite, des contraintes non évidentes, des pièges vicieux qui ont déjà provoqué de vrais problèmes. Il faut penser ce fichier comme **la courte liste de choses que vous diriez à un dev qui arrive sur le projet**.
+L'agent sait déjà lire votre codebase. Ce qui l'aide, c'est ce qu'il *ne peut pas* déduire du code : de la connaissance tacite, des contraintes non évidentes, des pièges subtils qui ont déjà provoqué de vrais problèmes. Il faut penser ce fichier comme **la courte liste de choses que vous diriez à un dev qui arrive sur le projet**.
 
 Trois types de contenu y ont leur place :
 
@@ -158,8 +158,8 @@ Le principe est simple : si l'information est spécialisée ou pertinente seulem
 
 ### Skills
 
-Quand ils sont bien conçus, les skills sont l'un des leviers les plus efficaces d'un harness. Ils déplacent les connaissances spécialisées hors du contexte permanent vers un modèle de récupération à la demande : l'agent va chercher ce dont il a besoin quand il en a besoin, plutôt que de tout porter en permanence. La fenêtre contextuelle principale reste propre et focalisée.
-L'intérêt est aussi cumulatif. Un skill bien écrit pour une librairie ou un workflow spécifique délivre une guidance de niveau expert au moment opportun, sans en payer le coût sur chaque tâche sans rapport. C'est l'argument fondamental contre un  `CLAUDE.md` qui grossit sans fin : le contexte permanent est un coût fixe, les skills sont un coût variable. En pratique, vous devriez autant que possible et si ça reste pertinent, migrer le plus possible de règles de votre AGENTS.md / CLAUDE.md vers des skills dédiées.
+Quand ils sont bien conçus, les skills sont l'un des leviers les plus efficaces d'un harness. Ils déplacent les connaissances spécialisées hors du contexte permanent vers un modèle de récupération à la demande : l'agent va chercher ce dont il a besoin, quand il en a besoin, plutôt que de tout porter en permanence. La fenêtre de contexte principale reste propre et focalisée.
+L'intérêt est aussi cumulatif. Un skill bien écrit pour une librairie ou un workflow spécifique apporte une guidance de niveau expert au bon moment, sans en payer le coût sur chaque tâche sans rapport. C'est l'argument fondamental contre un `CLAUDE.md` qui grossit sans fin : le contexte permanent est un coût fixe, les skills sont un coût variable. En pratique, migrez autant que possible les règles de votre `AGENTS.md` / `CLAUDE.md` vers des skills dédiées (si ça reste pertinent).
 
 Un skill n'est pas seulement un fichier `.md`. C'est une **unité de récupération**, un répertoire en trois parties :
 
@@ -238,14 +238,14 @@ Cela déplace le comportement par défaut de "le modèle sait probablement" vers
 
 Ces outils ne règlent pas tout. Pour les intégrations nécessitant une authentification persistante ou une manipulation avec état dans un système externe, MCP reste la bonne réponse. De même pour les skills quand l'agent a besoin d'un workflow réutilisable, de conventions locales, ou d'une façon fiable de combiner des outils en séquence reproductible. Préférez une skill quand la valeur est dans comment le travail doit être fait. Préférez WebSearch ou WebFetch quand la valeur est dans la récupération de faits externes actuels : documentation, changelogs, spécifications d'API, détails de référence précis. En pratique : les skills encodent la procédure, les tools WebSearch/WebFetch fournissent les données à jour.
 
-### Le CLI comme surface d'exécution
-La CLI est la surface d'exécution naturelle pour les agents, et elle se divise en deux catégories :
+### La CLI comme surface d'exécution
+La CLI est une surface d'exécution naturelle pour les agents, et elle se divise en deux catégories :
 
 #### Outils natifs
 
 Les fondamentaux Unix (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) et les workflows git de base sont profondément ancrés dans l'entraînement de la plupart des LLM. Ils ne nécessitent aucune introduction et ont un coût de contexte quasi nul. L'agent peut les enchaîner, les piper, et les adapter à des situations nouvelles sans instructions explicites. Si une tâche peut être accomplie avec des outils shell standard, c'est généralement le bon choix.
 
-#### CLI augmentés
+#### CLI augmentées
 
 La deuxième catégorie est probablement sous-utilisée : les CLIs que vous pouvez installer pour étendre les capacités de votre agent, des outils qui ne font pas partie de la chaîne d'outils de base mais deviennent disponibles dès qu'ils sont installés sur la machine.
 Un bon exemple est `gh`, la [GitHub CLI](https://cli.github.com/) officielle. Elle débloque un accès direct aux opérations GitHub depuis le shell. Aucune configuration au-delà de l'installation.
@@ -255,7 +255,7 @@ La même logique s'applique à un ensemble d'outils plus large :
 - Les CLIs de cloud providers comme [`AWS CLI`](https://github.com/aws/aws-cli) et [`Azure CLI`](https://github.com/Azure/azure-cli?wt.mc_id=developermscom) exposent des centaines d'opérations que l'agent peut enchaîner directement, avec une syntaxe qu'il connaît déjà depuis l'entraînement.
 - Des CLI custom construites spécifiquement pour vos projets
 
-Quand utiliser le CLI ? Si un outil a un CLI mature et que l'agent peut l'utiliser depuis son propre entraînement comme point de départ, **préférez le CLI**. MCP s'impose quand l'outil n'a pas de CLI, quand l'authentification est trop délicate à gérer proprement en shell, ou quand le workflow nécessite un état persistant dans un système externe.
+Quand utiliser la CLI ? Si un outil a une CLI mature et que l'agent peut s'appuyer sur ses connaissances d'entraînement comme point de départ, **préférez la CLI**. MCP s'impose quand l'outil n'a pas de CLI, quand l'authentification est trop délicate à gérer proprement en shell, ou quand le workflow nécessite un état persistant dans un système externe.
 
 ### Les subagents comme workers isolés
 
@@ -266,14 +266,14 @@ Un subagent est un agent "spawné" par l'agent principal pour gérer une sous-t�
 - de son propre scope
 - puis retourne un résultat au parent
 
-Du point de vue de la context-layer architecture, cela est important parce que ça déplace le travail hors du contexte principal.
-Au lieu de charger une analyse approfondie de la codebase ou une longue séquence de diagnostic dans la fenêtre principale, vous déléguez. L'agent parent voit simplement le résultat, pas tout le raisonnement intermédiaire et les lectures de fichiers qui l'ont produit.
+Du point de vue de la Context-Layer Architecture, cela compte parce que ça déplace le travail hors du contexte principal.
+Au lieu de charger une analyse approfondie de la codebase (ou une longue séquence de diagnostic) dans la fenêtre principale, vous déléguez. L'agent parent voit simplement le résultat, pas tout le raisonnement intermédiaire ni les lectures de fichiers qui l'ont produit.
 Les bénéfices concrets sont :
 
 - **Isolation :** chaque subagent travaille avec sa propre fenêtre contextuelle et évite ainsi qu'une tâche latérale pollue le contexte principal.
 - **Parallélisme :** ils peuvent avancer en même temps sur des tâches indépendantes, comme écrire des tests pour le module A pendant qu'un refactor a lieu sur le module B.
 
-En pratique, la plupart des agents gèrent ça automatiquement. Claude Code, Codex, Kiro et outils similaires spawnent des subagents quand les tâches le justifient. Vous ne configurez généralement pas cela, mais vous pouvez si vous le shouaitez explicitement spawner des subagents personnalisés pour des sous-tâches bien définies.
+En pratique, la plupart des agents gèrent ça automatiquement. Claude Code, Codex, Kiro et des outils similaires spawnent des subagents quand les tâches le justifient. Vous ne configurez généralement pas cela, mais vous pouvez, si vous le souhaitez, spawner des subagents personnalisés pour des sous-tâches bien définies.
 
 ---
 
@@ -349,7 +349,7 @@ Beaucoup de règles qui encombrent `AGENTS.md/CLAUDE.md` sont en réalité des c
 
 </div>
 
-Ce sont des contraintes strites, pas de la connaissance implicite. La règle `use-pnpm` devient un hook `PreToolUse` qui inspecte chaque commande shell. La protection de `__generated__` devient un contrôle de chemin sur les opérations d'écriture. Le format des commits s'impose sur les outils shell qui invoquent `git commit`.
+Ce sont des contraintes strictes, pas de la connaissance implicite. La règle `use-pnpm` devient un hook `PreToolUse` qui inspecte chaque commande shell. La protection de `__generated__` devient un contrôle de chemin sur les opérations d'écriture. Le format des commits s'impose sur les outils shell qui invoquent `git commit`.
 
 Déplacer les règles d'« enforcement » hors du contexte permanent et dans les hooks est **l'un des nettoyages les plus rentables que vous puissiez faire**. Cela permet de garder `AGENTS.md/CLAUDE.md` centré sur ce qui a réellement besoin de contexte, et de réserver la couche système à ce qui exige des **garanties absolues**.
 
@@ -453,7 +453,7 @@ Plus vous encodez de règles spécifiques au projet, plus la sortie de l'agent r
 
 Les tests sont le signal de « feedback » le plus direct dans votre "harness". Le type checker indique à l'agent que le code est structurellement valide, le linter lui dit qu'il respecte les règles, et les tests lui disent si le code *fait réellement ce qu'il est censé faire*.
 
-Écrire des tests était autrefois coûteux et pénible, si bien que certaines équipes se contentaient parfois d'une couverture moyenne de tests passables. La boucle de feedback était limitée par la quantité de "paint points" acceptable.
+Écrire des tests était autrefois coûteux et pénible, si bien que certaines équipes se contentaient parfois d'une couverture moyenne de tests passables. La boucle de feedback était limitée par la quantité de "pain points" acceptable.
 Aujourd'hui, le coût de la couverture et de la qualité des tests a changé. Vous décrivez le comportement, vous pointez l'agent vers le composant, et il peut proposer rapidement une suite de tests. La conséquence pratique : **les trous dans la couverture de tests sont désormais des trous dans la « feedback loop »**.
 
 Inversement, exiger une couverture complète et des tests de qualité crée un cercle vertueux. Ces tests deviennent des repères tangibles : ils guident l'agent dans ses prochaines modifications et lui permettent d'évoluer avec confiance dans la codebase.
@@ -471,11 +471,11 @@ Ce qui est nouveau, c'est le coût de ne pas le faire. Quand un développeur hum
 
 Un agent n'a rien de tout cela. Chaque trou dans votre harness est un trou dans lequel l'agent tombera, silencieusement, à chaque tâche.
 
-Le paradoxe, c'est qu'une codebase bien conçue n'a presque plus besoin de `CLAUDE.md`.
+Le paradoxe, c'est qu'une base de code bien conçue n'a presque plus besoin de `CLAUDE.md`.
 
-Les agents sont d'excellents « pattern matchers ». Si les décisions d'architecture et les patterns de codings apparaissent de manière cohérente, l'agent n'a pas besoin qu'on lui réécrive les règles à chaque fois. Il peut les lire dans l'environnement.
+Les agents sont d'excellents « pattern matchers ». Si les décisions d'architecture et les patterns de code apparaissent de manière cohérente, l'agent n'a pas besoin qu'on lui réécrive les règles à chaque fois. Il peut les lire dans l'environnement.
 
-Les couches de contexte manuelles existent pour compenser les manques. Éliminez les manques, et vous éliminerez l'essentiel de ce que ces fichiers d'AGENTS et de skills avait besoin de dire.
+Les couches de contexte manuelles existent pour compenser les manques. Éliminez les manques, et vous éliminerez l'essentiel de ce que ces fichiers d'AGENTS et de skills avaient besoin de dire.
 
 La discipline que demande le « harness engineering » est la même que celle qu'a toujours demandée le bon engineering : **encoder les décisions pour qu'elles survivent à ceux qui les ont prises, préférer un « enforcement » déterministe à la connaissance tacite, et refermer les « feedback loops » tôt.**
 
