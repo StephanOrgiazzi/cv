@@ -27,7 +27,7 @@ Le réflexe habituel est d'en ajouter davantage : plus de skills, plus de règle
 
 Ces règles compensent quelque chose que la codebase ne parvient pas à communiquer d'elle-même. Un module bien structuré, avec des conventions cohérentes, n'a pas besoin d'un paragraphe de règles implicites pour être compris : l'agent peut le lire directement.
 Ce changement de paradigme est important parce qu'il redéfinit ce à quoi sert réellement le harness engineering. Le but n'est pas d'empiler des couches de règles, mais de rendre chacune superflue, une décision à la fois, en l'encodant dans la codebase elle-même, là où elle devient permanente, visible et impossible à ignorer.
-Cet article reviendra sur cette idée à la fin, mais pour l'instant, les couches de contexte méritent d'être comprises précisément parce qu'elles révèlent où se situent les lacunes.
+C'est pourquoi il est utile d'examiner les couches du contexte : elles révèlent précisément où se situent les lacunes.
 
 ## Le problème central
 
