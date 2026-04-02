@@ -27,7 +27,7 @@ Le réflexe habituel est d'en ajouter davantage : plus de skills, plus de règle
 
 Ces règles compensent quelque chose que la codebase ne parvient pas à communiquer d'elle-même. Un module bien structuré, avec des conventions cohérentes, n'a pas besoin d'un paragraphe de règles implicites pour être compris : l'agent peut le lire directement.
 Ce changement de paradigme est important parce qu'il redéfinit ce à quoi sert réellement le harness engineering. Le but n'est pas d'empiler des couches de règles, mais de rendre chacune superflue, une décision à la fois, en l'encodant dans la codebase elle-même, là où elle devient permanente, visible et impossible à ignorer.
-C'est pourquoi il est utile d'examiner les couches du contexte : elles révèlent précisément où se situent les lacunes.
+Analyser les couches du contexte nous permettent justement de révéler précisément où se situent les lacunes.
 
 ## Le problème central
 
@@ -104,11 +104,11 @@ En pratique :
 
 Il s'agit du fichier Markdown à la racine du projet qui est systématiquement chargé dans le contexte de l'agent, sans être explicitement invoqué.
 
-Le premier réflexe, quand on en met un en place, est d'écrire tout ce qui passe : vue d'ensemble de l'architecture, structure des dossiers, conventions d'équipe, choix des librairies, notes d'onboarding, etc... Il faut résister à ce réflexe. **Un fichier de contexte permanent doit être court, strict et opérationnel.** Si une règle ne vaut pas la peine d'être appliquée à chaque tâche, elle n'a probablement pas sa place ici.
+Le premier réflexe, quand on en met un en place, est d'écrire tout ce qui passe : vue d'ensemble de l'architecture, structure des dossiers, conventions d'équipe, choix des librairies, notes d'onboarding, etc... Il faut résister à cette envie. **Un fichier de contexte permanent doit être court, strict et opérationnel.** Si une règle ne vaut pas la peine d'être appliquée à chaque tâche, elle n'a probablement pas sa place ici.
 
 ### Keep it short
 
-[Les fichiers `AGENTS.md/CLAUDE.md` ont tendance à *diminuer* le taux de réussite des tâches par rapport à l'absence totale de fichiers `AGENTS.md/CLAUDE.md`, tout en augmentant le coût d'inférence de plus de 20 %](https://arxiv.org/abs/2602.11988). Les fichiers auto-générés (via `/init` ou équivalent) sont souvent les premiers coupables : ils forcent l'agent à dépenser des tokens de raisonnement sur des informations qu'il pourrait déduire simplement en lisant le code. Des fichiers .md trop volumineux, contradictoires ou sur-spécifiés transforment l'info utile en bruit. Anthropic recommande d'ailleurs de se limiter à 200 lignes maximum.
+[Les fichiers `AGENTS.md/CLAUDE.md` ont tendance à *diminuer* le taux de réussite des tâches par rapport à l'absence totale de fichiers `AGENTS.md/CLAUDE.md`, tout en augmentant le coût d'inférence de plus de 20 %](https://arxiv.org/abs/2602.11988). Les fichiers auto-générés (via `/init` ou équivalent) sont souvent les premiers coupables : ils forcent l'agent à dépenser des tokens de raisonnement sur des informations qu'il pourrait déduire simplement en lisant le code. Des fichiers .md trop volumineux, contradictoires ou sur-spécifiés transforment l'info utile en bruit.
 
 ### Ce qui doit être dans CLAUDE.md/AGENTS.md
 
@@ -116,7 +116,7 @@ L'agent sait déjà lire votre codebase. Ce qui l'aide, c'est ce qu'il *ne peut 
 
 Trois types de contenu y ont leur place :
 
-Contraintes que l'agent pourrait ne pas déduire du contexte seul.
+#### Contraintes que l'agent pourrait ne pas déduire du contexte seul.
 
 <div class="instruction-block">
 
@@ -158,10 +158,9 @@ Le principe est simple : si l'information est spécialisée ou pertinente seulem
 
 ### Skills
 
-Quand ils sont bien conçus, les skills sont l'un des leviers les plus efficaces d'un harness. Ils déplacent les connaissances spécialisées hors du contexte permanent vers un modèle de récupération à la demande : l'agent va chercher ce dont il a besoin, quand il en a besoin, plutôt que de tout porter en permanence. La fenêtre de contexte principale reste propre et focalisée.
-L'intérêt est aussi cumulatif. Un skill bien écrit pour une librairie ou un workflow spécifique apporte une guidance de niveau expert au bon moment, sans en payer le coût sur chaque tâche sans rapport. C'est l'argument fondamental contre un `CLAUDE.md` qui grossit sans fin : le contexte permanent est un coût fixe, les skills sont un coût variable. En pratique, migrez autant que possible les règles de votre `AGENTS.md` / `CLAUDE.md` vers des skills dédiées (si ça reste pertinent).
+Quand ils sont bien conçus, les skills sont l'un des leviers les plus efficaces d'un harness. Ils déplacent les connaissances spécialisées hors du contexte permanent vers un modèle de récupération à la demande : l'agent va chercher ce dont il a besoin, quand il en a besoin. La fenêtre de contexte reste propre, et vous ne payez le coût de l'expertise que lorsque vous en avez réellement besoin. C'est l'argument fondamental contre un `CLAUDE.md` qui grossit sans fin : le contexte permanent est un coût fixe, les skills sont un coût variable. En pratique, migrez autant que possible les règles de votre `AGENTS.md` / `CLAUDE.md` vers des skills dédiées.
 
-Un skill n'est pas seulement un fichier `.md`. C'est une **unité de récupération**, un répertoire en trois parties :
+Un skill n'est pas seulement un fichier `.md`. C'est un répertoire en trois parties :
 
 - **`SKILL.md` (obligatoire) :** contient un frontmatter YAML (métadonnées) et des instructions en Markdown. L'agent ne lit d'abord que le nom et la description. Si cela correspond à la demande de l'utilisateur, il ouvre ensuite le fichier pour suivre les instructions.
 - **`scripts/` (optionnel) :** du code exécutable (Bash, JS/TS, Python) qui permet à l'agent d'effectuer des actions que le LLM ne peut pas réaliser nativement.
@@ -171,7 +170,7 @@ Un skill n'est pas seulement un fichier `.md`. C'est une **unité de récupérat
 
 ##### 1. Skills de documentation et de connaissance
 
-Même les modèles les plus avancés ont une "knowledge cutoff", une date de coupure des connaissances. Ou bien ils manquent parfois de contexte spécifique au projet.
+Même les modèles les plus avancés ont une "knowledge cutoff", une date de coupure des connaissances.
 
 - **But :** fournir une information que l'agent ne connaît pas, ou qu'il risque de mal se rappeler.
 - **Exemple :** si vous utilisez **Expo SDK 55**, l'agent peut ne pas connaître les détails de l'API, simplement parce que cette version en particulier n'était peut-être pas dans ses données d'entraînement.
@@ -191,14 +190,15 @@ C'est probablement le type de skill le plus sous-utilisé.
 
 - **But :** donner à l'agent des capacités qu'il n'a pas nativement, en embarquant des scripts qui produisent un résultat que le modèle seul ne peut pas produire.
 - **Exemple :** un skill [codebase-visualizer](https://code.claude.com/docs/en/skills) qui exécute un script embarqué pour générer un arbre HTML interactif du projet.
-- **Pourquoi c'est important :** sans le script, ce n'est qu'un prompt. Avec le script, c'est un outil. Toute la logique de ce type de skill est là.
-
-#### Risques d'un registre de skills : « bloat » et sécurité
+- **Pourquoi c'est important :** sans le script, ce n'est qu'un prompt. Avec le script, c'est un outil.
+#### Risques : « bloat » et sécurité
 
 Il est tentant d'installer tous les skills de bonnes pratiques que vous trouvez, mais c'est généralement une erreur :
 
 1. **Bloat de contexte :** même avec du lazy loading, l'agent parcourt la description de chaque skill installé à chaque tour. Avec 50 skills, vous ajoutez plus de 2 000 tokens de bruit à chaque prompt.
 2. **Risque de prompt injection :** un skill est un prompt exécutable. Un skill tiers malveillant peut embarquer des instructions cachées qui modifient le comportement de l'agent. **Auditez toujours le `SKILL.md` et les scripts associés avant d'ajouter un skill à votre harness.**
+
+#### How to : [installer des skills pour votre agent](https://docs.specstory.com/agent-skills/installation)
 
 ### MCP pour les intégrations « stateful »
 
@@ -215,7 +215,7 @@ MCP est aussi le bon outil quand l'agent doit opérer *à l'intérieur* d'un aut
 
 Un bon exemple est  [Chrome DevTools MCP](https://developer.chrome.com/blog/chrome-devtools-mcp?hl=fr) : l'agent peut ouvrir Chrome, inspecter le DOM et le CSS en direct, lire l'activité console et réseau, simuler des flux utilisateur, et enregistrer une trace de performance via DevTools. Il ne se contente pas de récupérer de la documentation sur la page. Il opère à l'intérieur d'une session navigateur active et lit le state résultant. Le state réside dans Chrome, pas dans la fenêtre contextuelle, et MCP est le pont.
 
-Les outils MCP ne sont généralement pas très efficaces en termes de tokens, et peuvent vite coûter cher. **Si vous n'avez pas besoin d'authentification ou d'état externe persistant, vous n'avez probablement pas besoin de MCP.** Un skill résout généralement le même problème avec moins d'overhead et moins de complexité.
+Les outils MCP ne sont généralement pas très efficaces en termes de tokens. **Si vous n'avez pas besoin d'authentification ou d'état externe persistant, vous n'avez probablement pas besoin de MCP.** Un skill résout généralement le même problème avec moins d'overhead et moins de complexité.
 
 ### WebSearch et WebFetch pour la récupération d'information
 
@@ -224,7 +224,7 @@ Ces outils sont natifs à la plupart des agents modernes. Ils résolvent deux pr
 - **Knowledge cutoff:** un modèle de langage s'entraîne sur un instantané du monde à une date donnée. Pour tout ce qui évolue, une nouvelle version de Next.js, du Expo SDK, un breaking change, le modèle ne sait pas.
 - **Erreurs de précision:** même pour des APIs stables présentes dans les données d'entraînement, le modèle peut générer des détails plausibles mais incorrects : mauvaises signatures de méthodes, comportements de cas limites inventés, etc...
 
-`WebSearch` et `WebFetch` répondent aux deux. Architecturalement, ils fournissent de la *récupération à la demande* : au lieu de se fier aux poids du pré-entraînement, l'agent récupère la donnée factuelle et réelle depuis des sources à jour et raisonne à partir de celle-ci.
+`WebSearch` et `WebFetch` répondent aux deux. Architecturalement, ils fournissent de la *récupération à la demande* : au lieu de se fier aux poids du pré-entraînement, l'agent récupère la donnée factuelle depuis des sources à jour et raisonne à partir de celle-ci.
 
 <div class="instruction-block">
 
@@ -232,23 +232,23 @@ Ces outils sont natifs à la plupart des agents modernes. Ils résolvent deux pr
 
 </div>
 
-Il est souvent très payant de rendre explicite dans vos prompts, votre AGENTS.md, CLAUDE.md, ou vos skills le fait d'utiliser le tool WebSearch.
-**prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters**
-Cela déplace le comportement par défaut de "le modèle sait probablement" vers "vérifier d'abord avant d'agir."
+Il est souvent très payant de rendre explicite dans vos prompts, votre AGENTS.md, CLAUDE.md, ou vos skills le fait d'utiliser le tool WebSearch afin de remplacer le comportement par défaut du LLM :
 
-Ces outils ne règlent pas tout. Pour les intégrations nécessitant une authentification persistante ou une manipulation avec état dans un système externe, MCP reste la bonne réponse. De même pour les skills quand l'agent a besoin d'un workflow réutilisable, de conventions locales, ou d'une façon fiable de combiner des outils en séquence reproductible. Préférez une skill quand la valeur est dans comment le travail doit être fait. Préférez WebSearch ou WebFetch quand la valeur est dans la récupération de faits externes actuels : documentation, changelogs, spécifications d'API, détails de référence précis. En pratique : les skills encodent la procédure, les tools WebSearch/WebFetch fournissent les données à jour.
+**"Prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters"**
+
+Cela déplace le comportement par défaut de "le modèle sait probablement" vers "vérifier d'abord avant d'agir."
 
 ### La CLI comme surface d'exécution
 La CLI est une surface d'exécution naturelle pour les agents, et elle se divise en deux catégories :
 
 #### Outils natifs
 
-Les fondamentaux Unix (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) et les workflows git de base sont profondément ancrés dans l'entraînement de la plupart des LLM. Ils ne nécessitent aucune introduction et ont un coût de contexte quasi nul. L'agent peut les enchaîner, les piper, et les adapter à des situations nouvelles sans instructions explicites. Si une tâche peut être accomplie avec des outils shell standard, c'est généralement le bon choix.
+Les fondamentaux Unix (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) et les commandes git de base sont profondément ancrés dans l'entraînement de la plupart des LLM. Ils ne nécessitent aucune introduction et ont un coût de contexte quasi nul. L'agent peut les enchaîner, les piper, et les adapter à des situations nouvelles sans instructions explicites.
 
 #### CLI augmentées
 
-La deuxième catégorie est probablement sous-utilisée : les CLIs que vous pouvez installer pour étendre les capacités de votre agent, des outils qui ne font pas partie de la chaîne d'outils de base mais deviennent disponibles dès qu'ils sont installés sur la machine.
-Un bon exemple est `gh`, la [GitHub CLI](https://cli.github.com/) officielle. Elle débloque un accès direct aux opérations GitHub depuis le shell. Aucune configuration au-delà de l'installation.
+Ce sont les CLIs que vous pouvez installer pour étendre les capacités de votre agent, des outils qui ne font pas partie de la chaîne d'outils de base mais deviennent disponibles dès qu'ils sont installés sur la machine. En pratique, pour qu'un agent pense à les utiliser de manière fiable, il faut aussi lui signaler explicitement leur existence dans `AGENTS.md` ou dans un skill.
+Un bon exemple est `gh`, la [GitHub CLI](https://cli.github.com/) officielle. Elle débloque un accès direct aux opérations GitHub depuis le shell.
 
 La même logique s'applique à un ensemble d'outils plus large :
 - [`agent-browser`](https://github.com/vercel-labs/agent-browser) donne à l'agent la capacité de contrôler un navigateur headless depuis la ligne de commande, utile pour tester, débugger ou naviger dans l'UI d'une app.
@@ -289,6 +289,8 @@ Les permissions définissent ce que l'agent est autorisé à faire : accès au f
 
 Là où une règle dans `AGENTS.md/CLAUDE.md` peut être ignorée, un hook est une barrière stricte.
 Contrairement aux `AGENTS.md/CLAUDE.md`, les hooks ne vivent pas dans le prompt. Ils n'injectent du contenu dans le contexte que quand ils échouent. Cela rend les hooks idéaux pour les règles que vous **ne voulez jamais voir violées**, sans payer un coût contextuel permanent.
+
+<p class="article-note"><em>Note : l'implémentation des hooks décrite dans cette section correspond à celle de Claude Code. Les autres agents peuvent exposer un modèle, des événements ou des handlers différents, car cette couche n'est pas encore réellement standardisée.</em></p>
 
 #### Types de handlers
 
@@ -336,6 +338,8 @@ if ! npx tsc --noEmit 2>&1 | head -20; then
   echo "Type errors introduced - resolve before proceeding." >&2
 fi
 ```
+
+#### How to : [installer des hooks pour Claude Code](https://code.claude.com/docs/en/hooks-guide)
 
 #### Déplacer les règles strictes hors du `AGENTS.md`
 

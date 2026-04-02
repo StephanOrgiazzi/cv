@@ -32,7 +32,7 @@ It compensates for something the codebase fails to communicate on its own. A wel
 
 That reframe matters because it changes what harness engineering is actually for. The goal is not to accumulate layers, but to make each one unnecessary, one decision at a time, by moving that decision into the codebase itself, where it becomes permanent, visible, and impossible to ignore.
 
-This article will come back to that idea at the end, but for now the layers are worth understanding precisely because they reveal where the gaps are.
+Analyzing the context layers is precisely what reveals where those gaps are.
 
 ## The core problem
 
@@ -114,7 +114,7 @@ The first instinct when setting one up is to write everything: architecture over
 
 ### Keep it short
 
-[`AGENTS.md/CLAUDE.md` tend to *reduce* task-success rates compared to providing no `AGENTS.md/CLAUDE.md` at all, while simultaneously increasing inference cost by over 20%](https://arxiv.org/abs/2602.11988). Auto-generated files (via `/init` or similar) are primary culprits: they force the agent to spend reasoning tokens on information it could infer directly from reading the code. Bloated, contradictory, or over-specified files turn useful signal into noise. Anthropic recommends staying under 200 lines.
+[`AGENTS.md/CLAUDE.md` tend to *reduce* task-success rates compared to providing no `AGENTS.md/CLAUDE.md` at all, while simultaneously increasing inference cost by over 20%](https://arxiv.org/abs/2602.11988). Auto-generated files (via `/init` or similar) are primary culprits: they force the agent to spend reasoning tokens on information it could infer directly from reading the code. Bloated, contradictory, or over-specified files turn useful signal into noise.
 
 ### What belongs here
 
@@ -170,11 +170,11 @@ This layer covers everything the agent can reach for when needed, but that does 
 | **CLI**                | Direct execution through shell commands and installed command-line tools  | When the task is best handled through local commands, scripts, or developer tooling                   |
 | **Subagents**          | Spawned helper agents for scoped exploration or execution       | When the task can be decomposed into bounded subtasks or parallelized |
 
-### Skills architecture
+### Skills
 
-Done well, skills are one of the most effective levers in a harness. They move specialized knowledge out of permanent context and into a retrieval model: the agent reaches for what it needs, when it needs it, rather than carrying everything at once. That keeps the main context window clean and focused. It also means that skill quality compounds: a well-written skill for a specific library or workflow delivers expert-level guidance precisely when it matters, without paying for it on every unrelated task. This is the fundamental argument for skills over a bloated `CLAUDE.md`: permanent context is a fixed overhead while skills are a dynamic, variable cost. When it makes sense, move `AGENTS.md` / `CLAUDE.md` rules into dedicated skills.
+Done well, skills are one of the most effective levers in a harness. They move specialized knowledge out of permanent context and into a retrieval model: the agent reaches for what it needs, when it needs it. That keeps the context window clean, and you only pay the cost of expertise when you actually need it. This is the fundamental argument against a `CLAUDE.md` that keeps growing forever: permanent context is a fixed overhead while skills are a variable cost. In practice, move as many `AGENTS.md` / `CLAUDE.md` rules as possible into dedicated skills.
 
-A skill is not just a `.md` file. It is a **retrieval unit**: a self-contained directory that implements this lazy-loading model in three parts:
+A skill is not just a `.md` file. It is a directory with three parts:
 
 - **`SKILL.md` (required):** Contains YAML frontmatter (metadata) and Markdown instructions. The agent initially reads only the name and description. If it matches the user request, it opens the file for instructions.
 - **`scripts/` (optional):** Executable code (Bash, JS/TS, Python) that lets the agent perform actions the LLM cannot do natively.
@@ -186,7 +186,7 @@ To keep a harness usable, categorize skills by **intent**.
 
 ##### 1. Documentation and knowledge skills
 
-Even the most advanced models have a knowledge cutoff or lack project-specific context.
+Even the most advanced models have a knowledge cutoff.
 
 - **Purpose:** Provide information the agent doesn't know or might misremember.
 - **Example:** If you use **Expo SDK 55**, the agent might not know the API details because this specific API version may not be in training data.
@@ -206,14 +206,16 @@ This is the most underused skill type. It turns the agent from a conversational 
 
 - **Purpose:** Give the agent capabilities it doesn't have natively, by bundling scripts that produce output the model alone cannot.
 - **Example:** A [codebase-visualizer](https://code.claude.com/docs/en/skills) skill that runs a bundled script to generate an interactive HTML tree of your project
-- **Why it matters:** Without the script, this is a prompt. With the script, it is a tool. That distinction is the entire point of this skill type.
+- **Why it matters:** Without the script, this is a prompt. With the script, it is a tool.
 
-#### Skill registry risks: bloat and security
+#### Risks: bloat and security
 
 It is tempting to install every best-practice skill you can find, but it is usually a mistake.
 
 1. **Context bloat:** even with lazy loading, the agent still scans every installed skill description on every turn. If you have 50 skills, you have added 2,000+ tokens of routing noise to each prompt.
 2. **Prompt-injection risk:** a skill is an executable prompt. A malicious third-party skill can embed hidden instructions that alter agent behavior. **Always audit `SKILL.md` and any associated scripts before adding a skill to your harness.**
+
+#### How to: [install skills for your agent](https://docs.specstory.com/agent-skills/installation)
 
 ### MCP for stateful integrations
 
@@ -234,7 +236,7 @@ MCP is also the right tool when the agent needs to operate *inside* another syst
 A good example is [Chrome DevTools MCP](https://developer.chrome.com/blog/chrome-devtools-mcp?hl=fr): the agent can open Chrome, inspect the live DOM and CSS, read console and network activity, simulate user flows, and record a performance trace through DevTools. It is not just fetching documentation about the page. It is operating inside a running browser session and reading the resulting state back. The state lives in Chrome, not in the context window, and MCP is the bridge.
 
 
-MCP tools are usually not very token efficient, and they can get expensive fast. **If you do not need authentication or persistent external state, you probably do not need MCP.** A skill usually solves the same problem with less overhead and less complexity.
+MCP tools are usually not very token efficient. **If you do not need authentication or persistent external state, you probably do not need MCP.** A skill usually solves the same problem with less overhead and less complexity.
 
 ### WebSearch and WebFetch for retrieval
 
@@ -243,7 +245,7 @@ These tools are native to most modern agents. They solve two problems:
 - **Knowledge cutoff:** a language model trains on a snapshot of the world at a specific date. For anything that changes, such as a new Next.js release, a revised Expo SDK, or a breaking change, the model does not know.
 - **Precision errors:** even for stable APIs in training data, the model may generate plausible but incorrect details, such as wrong method signatures or invented edge-case behavior.
 
-`WebSearch` and `WebFetch` are the answer to both. Architecturally, they provide *retrieval on demand*: instead of trusting pre-training weights, the agent fetches **ground truth** from primary sources and reasons from there.
+`WebSearch` and `WebFetch` are the answer to both. Architecturally, they provide *retrieval on demand*: instead of trusting pre-training weights, the agent fetches factual data from up-to-date sources and reasons from there.
 
 <div class="instruction-block">
 
@@ -251,9 +253,11 @@ These tools are native to most modern agents. They solve two problems:
 
 </div>
 
-This habit should be explicit in your prompts, your `AGENTS.md`, `CLAUDE.md`, or skills: **prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters**. That shifts the default from *"the model probably knows"* to **"check first."**
+It is often worth making WebSearch usage explicit in your prompts, `AGENTS.md`, `CLAUDE.md`, or skills to replace the LLM's default behavior:
 
-These tools do not solve everything. For integrations that require persistent authentication or stateful manipulation in an external system, `MCP` is still the right answer. The same applies to **skills** when the agent needs a reusable workflow, local conventions, or a reliable way to combine tools in a repeatable sequence. Prefer a `skill` when the value is in *how* the work should be done. Prefer `WebSearch` or `WebFetch` when the value is in retrieving *current external facts*, such as documentation, changelogs, API specifications, and precise reference details. In practice: skills encode procedure, retrieval tools supply ground truth.
+**"Prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters"**
+
+That shifts the default from *"the model probably knows"* to **"check first."**
 
 ### CLI as the execution surface
 
@@ -261,13 +265,13 @@ CLI is the natural execution surface for agents, and it falls into two categorie
 
 #### Native tools
 
-Unix fundamentals (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) and core git workflows are deeply embedded in most agents' training. They need no introduction and carry almost no context cost. The agent can chain them, pipe them, and adapt them to novel situations without explicit instructions. If a task can be done with standard shell tools, that is usually the right call.
+Unix fundamentals (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) and core git commands are deeply embedded in most agents' training. They need no introduction and carry almost no context cost. The agent can chain them, pipe them, and adapt them to novel situations without explicit instructions.
 
 #### Augmented CLIs
 
-The second category is probably underused: CLIs you can install to extend your agent's capabilities, tools that are not part of the base toolchain but become available as soon as they are installed on the machine.
+These are CLIs you can install to extend your agent's capabilities, tools that are not part of the base toolchain but become available as soon as they are installed on the machine. In practice, if you want the agent to use them reliably, you also need to explicitly tell it they exist in `AGENTS.md` or in a skill.
 
-A good example is `gh`, the official [GitHub CLI](https://cli.github.com/). It unlocks direct access to GitHub operations from the shell. No setup beyond installation.
+A good example is `gh`, the official [GitHub CLI](https://cli.github.com/). It unlocks direct access to GitHub operations from the shell.
 
 The same logic applies across a broader tool set:
 
@@ -312,6 +316,8 @@ Permissions define what the agent is allowed to attempt: file-system access, net
 Where an `AGENTS.md/CLAUDE.md` rule can be ignored, a hook is a **hard gate**.
 
 Unlike `AGENTS.md/CLAUDE.md`, hooks do not live in the prompt. They only inject content into context when they fail. That makes hooks ideal for rules you **never want violated**, without paying an ongoing context cost.
+
+<p class="article-note"><em>Note: the hook implementation described in this section corresponds to Claude Code. Other agents may expose a different model, event set, or handler system, since this layer is not yet truly standardized.</em></p>
 
 #### Handler types
 
@@ -358,6 +364,8 @@ fi
 ```
 
 Use `PreToolUse` for **policy guards** and `PostToolUse` for **cleanup and feedback**.
+
+#### How to: [install hooks for Claude Code](https://code.claude.com/docs/en/hooks-guide)
 
 #### Move hard rules out of AGENTS.md context
 
