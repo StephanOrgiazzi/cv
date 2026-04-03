@@ -23,6 +23,17 @@ const stripMarkdown = (content: string) =>
 
 const projects = [
   {
+    title: "playdot-player",
+    description: "Open source premium video player for Windows focused on playback quality, compatibility, and a polished desktop experience.",
+    theme: "blue",
+    link: "https://stephanorgiazzi.github.io/playdot-player/",
+    repo: "StephanOrgiazzi/playdot-player",
+    imageSrc: withBase('projects/playdot-player-app.jpg'),
+    imageAlt: "playdot-player app screenshot",
+    imageFit: "cover",
+    highlights: ["tauri 2", "react 19", "mpv playback"]
+  },
+  {
     title: "revue",
     description: "Open source iOS and Android app that turns plain .md files into a focused, magazine-style reading experience.",
     theme: "green",
@@ -33,17 +44,6 @@ const projects = [
     imageFit: "contain",
     highlights: ["expo router", "react native", "ios + android"]
   },
-  {
-    title: "playdot-player",
-    description: "Open source premium video player for Windows focused on playback quality, compatibility, and a polished desktop experience.",
-    theme: "blue",
-    link: "https://github.com/StephanOrgiazzi/playdot-player",
-    repo: "StephanOrgiazzi/playdot-player",
-    imageSrc: withBase('projects/playdot-player-app.jpg'),
-    imageAlt: "playdot-player app screenshot",
-    imageFit: "cover",
-    highlights: ["tauri 2", "react 19", "mpv playback"]
-  }
 ];
 
 const articles = (await getCollection('articles')).filter(
