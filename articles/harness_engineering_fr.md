@@ -465,6 +465,8 @@ Inversement, exiger une couverture complète et des tests de qualité crée un c
 
 ## La codebase est le meilleur contexte
 
+Une idée centrale traverse tout l'article :
+
 Un `CLAUDE.md` et des skills de qualité, c'est simplement de la bonne documentation. Une configuration TypeScript stricte, c'est ce que les développeurs essaient déjà d'imposer sur chaque codebase. Des règles de lint qui encodent les décisions d'architecture, c'est de la connaissance institutionnelle écrite. Les tests comme "feedback loop" ne sont pas une idée nouvelle, c'est **l'une** des idées les plus anciennes de la qualité logicielle.
 
 ### Le "harness engineering", c'est simplement du bon engineering
