@@ -174,11 +174,11 @@ This layer covers everything the agent can reach for when needed, but that does 
 
 Done well, skills are one of the most effective levers in a harness. They move specialized knowledge out of permanent context and into a retrieval model: the agent reaches for what it needs, when it needs it. That keeps the context window clean, and you only pay the cost of expertise when you actually need it. This is the fundamental argument against a `CLAUDE.md` that keeps growing forever: permanent context is a fixed overhead while skills are a variable cost. In practice, move as many `AGENTS.md` / `CLAUDE.md` rules as possible into dedicated skills.
 
-A skill is not just a `.md` file. It is a directory with three parts:
+A skill is not always just a `.md` file. It is a directory with three parts:
 
-- **`SKILL.md` (required):** Contains YAML frontmatter (metadata) and Markdown instructions. The agent initially reads only the name and description. If it matches the user request, it opens the file for instructions.
-- **`scripts/` (optional):** Executable code (Bash, JS/TS, Python) that lets the agent perform actions the LLM cannot do natively.
-- **`references/` (optional):** Deep-dive documentation loaded only if the agent needs to look something up mid-task.
+- **`SKILL.md` (required):** Contains YAML frontmatter (metadata) and Markdown instructions. The agent only loads the name and description from the frontmatter into its context. If it judges that the description matches the user's request, it then opens the entire file to follow the instructions.
+- **`scripts/` (optional):** Executable code (Bash, JS/TS, Python) that lets the agent perform actions on the LLM.
+- **`references/` (optional):** In-depth documentation loaded only if the agent needs to look something up mid-task. This is an additional sub-layer of on-demand context.
 
 #### The three core skill types
 
@@ -186,10 +186,10 @@ To keep a harness usable, categorize skills by **intent**.
 
 ##### 1. Documentation and knowledge skills
 
-Even the most advanced models have a knowledge cutoff.
+Even the most advanced models have a knowledge cutoff, a knowledge date linked to the end of their training.
 
 - **Purpose:** Provide information the agent doesn't know or might misremember.
-- **Example:** If you use **Expo SDK 55**, the agent might not know the API details because this specific API version may not be in training data.
+- **Example:** If you use **Expo SDK 55**, the agent might not know the API details simply because this specific API version may not have been in its training data.
 - **Solution:** [Expo Skills](https://expo.dev/expo-skills)
 
 ##### 2. Behaviors and best practices
@@ -200,9 +200,9 @@ LLMs tend to generate "average" code.
 - **Example:** A skill based on the React team's [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect) best-practices article.
 - **Solution:** [React useEffect Skill](https://github.com/softaworks/agent-toolkit/tree/main/skills/react-useeffect)
 
-##### 3. Functionality and tooling
+##### 3. Tooling skills
 
-This is the most underused skill type. It turns the agent from a conversational assistant into a system operator.
+This is probably the most underused skill type.
 
 - **Purpose:** Give the agent capabilities it doesn't have natively, by bundling scripts that produce output the model alone cannot.
 - **Example:** A [codebase-visualizer](https://code.claude.com/docs/en/skills) skill that runs a bundled script to generate an interactive HTML tree of your project
@@ -225,7 +225,7 @@ That matters in two main cases:
 
 #### 1. Authenticated integrations
 
-Some systems need a persistent, credentialed connection that a one-off shell command does not handle cleanly: [Atlassian](https://github.com/atlassian/atlassian-mcp-server), [GitHub](https://github.com/github/github-mcp-server), [Context7](https://github.com/upstash/context7), and others.
+Some systems need a persistent, credentialed connection: [Atlassian](https://github.com/atlassian/atlassian-mcp-server), [GitHub](https://github.com/github/github-mcp-server), [Context7](https://github.com/upstash/context7), and others.
 
 Manually managing tokens in shell environment variables or passing credentials as CLI flags is **fragile and error-prone**. MCP solves authentication once and exposes structured actions on top.
 
@@ -235,8 +235,7 @@ MCP is also the right tool when the agent needs to operate *inside* another syst
 
 A good example is [Chrome DevTools MCP](https://developer.chrome.com/blog/chrome-devtools-mcp?hl=fr): the agent can open Chrome, inspect the live DOM and CSS, read console and network activity, simulate user flows, and record a performance trace through DevTools. It is not just fetching documentation about the page. It is operating inside a running browser session and reading the resulting state back. The state lives in Chrome, not in the context window, and MCP is the bridge.
 
-
-MCP tools are usually not very token efficient. **If you do not need authentication or persistent external state, you probably do not need MCP.** A skill usually solves the same problem with less overhead and less complexity.
+MCP tools are usually not very token efficient. **If you do not need authentication or persistent external state to operate inside another system, you probably do not need MCP.** A skill usually solves the same problem with less overhead and less complexity.
 
 ### WebSearch and WebFetch for retrieval
 
@@ -257,7 +256,7 @@ It is often worth making WebSearch usage explicit in your prompts, `AGENTS.md`, 
 
 **"Prefer retrieval-led reasoning over pre-training-led reasoning whenever precision matters"**
 
-That shifts the default from *"the model probably knows"* to **"check first."**
+That shifts the default from *"the model probably knows"* to **"check first before acting."**
 
 ### CLI as the execution surface
 
@@ -265,7 +264,7 @@ CLI is the natural execution surface for agents, and it falls into two categorie
 
 #### Native tools
 
-Unix fundamentals (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) and core git commands are deeply embedded in most agents' training. They need no introduction and carry almost no context cost. The agent can chain them, pipe them, and adapt them to novel situations without explicit instructions.
+Unix fundamentals (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) and core git commands are deeply embedded in most agents' training. They need no introduction and carry almost no context cost. The agent can chain them and adapt them to novel situations without explicit instructions.
 
 #### Augmented CLIs
 
@@ -299,13 +298,13 @@ The practical gains are:
 - **Isolation:** A subagent that goes wrong does not corrupt the main session's context.
 - **Parallelism:** Subagents can run concurrently on independent tasks, such as writing tests for module A while refactoring module B.
 
-In practice, most agents handle this automatically. Claude Code, Codex, Kiro, and similar tools spawn subagents when tasks warrant it. You usually do not configure this, but you can explicitly spawn custom subagents for well-defined subtasks.
+In practice, most agents handle this automatically. Claude Code, Codex, Kiro, and similar tools spawn subagents when tasks warrant it. You usually do not configure this, but if you want finer control, you can explicitly spawn custom subagents for well-defined subtasks.
 
 ---
 
 ## Layer 3: the System layer (hooks and permissions)
 
-This is the **enforcement layer**. Unlike the permanent and on-demand layers, it does not rely on the model's judgment at all. It intercepts execution at lifecycle events and allows, blocks, or transforms actions before they reach the filesystem or external systems. Permissions and hooks run **deterministically**. They do not forget rules when the context gets crowded, which is why they are the most reliable enforcement surface in the stack.
+This is the **enforcement layer**. Unlike the permanent and on-demand layers, it does not rely on the model's judgment at all. It intercepts execution at lifecycle events and allows, blocks, or transforms actions before they reach the filesystem or external systems. Permissions and hooks run **deterministically**. They do not forget rules when the context gets crowded, which is why they are the most reliable enforcement surface in the harness.
 
 ### Permissions
 
@@ -317,7 +316,7 @@ Where an `AGENTS.md/CLAUDE.md` rule can be ignored, a hook is a **hard gate**.
 
 Unlike `AGENTS.md/CLAUDE.md`, hooks do not live in the prompt. They only inject content into context when they fail. That makes hooks ideal for rules you **never want violated**, without paying an ongoing context cost.
 
-<p class="article-note"><em>Note: the hook implementation described in this section corresponds to Claude Code. Other agents may expose a different model, event set, or handler system, since this layer is not yet truly standardized.</em></p>
+<p class="article-note"><em>Note: the hook implementation described in this section corresponds to Claude Code. Other agents that implement hooks may expose a different model, event set, or handler system, since this layer is not yet truly standardized.</em></p>
 
 #### Handler types
 
@@ -379,7 +378,7 @@ Many rules that clutter `AGENTS.md/CLAUDE.md` are actually enforcement candidate
 
 </div>
 
-These are hard constraints, not tribal knowledge. The use-pnpm rule becomes a `PreToolUse` hook inspecting every Bash command. The `__generated__` protection becomes a file-path check on `Write` operations. Commit-format enforcement runs on Bash tools invoking `git commit`.
+These are hard constraints, not implicit knowledge. The use-pnpm rule becomes a `PreToolUse` hook inspecting every Bash command. The `__generated__` protection becomes a file-path check on `Write` operations. Commit-format enforcement runs on Bash tools invoking `git commit`.
 
 Moving enforcement rules out of permanent context and into hooks is **one of the highest-leverage cleanups you can make**. It keeps `AGENTS.md/CLAUDE.md` focused on what genuinely needs reasoning context and reserves the system layer for what requires **absolute guarantees**.
 
@@ -389,7 +388,7 @@ Moving enforcement rules out of permanent context and into hooks is **one of the
 
 This verification loop closes the agent action cycle. It is one of the most underbuilt layers in agentic setups, and one of the most important to get right.
 
-The agent can produce something, report success, and still be wrong. The feature might work, but the code quality can be low. The feedback layer exists to catch that. Tests validate functional correctness, type checking catches structural breakage early and linting enforces consistency without needing a human to step in every time. Together, these checks keep the codebase maintainable and high quality and allow the agent to evolve more **autonomously**.
+The agent can produce something, report success, and still be wrong. The feature might work, but the code quality can be low. The feedback layer exists to catch that. Tests validate functional correctness, type checking catches structural breakage early, and linting enforces consistency without needing a human to step in every time. Together, these checks keep the codebase maintainable and high quality and allow the agent to evolve more **autonomously**.
 
 ### Type checking
 
@@ -441,13 +440,13 @@ You can solve this deterministically with built-in ESLint/OxLint rules that enfo
 }
 ```
 
-These constraints encode principles you would enforce as a developer anyway if you care about clean code architecture and patterns: composability, separation of concerns, and testable units. The difference is that a lint rule applies them automatically and immediately, enforcing deterministically what would otherwise require constant vigilance—without waiting for code review, without relying on the model's judgment in the moment. The agent adapts by producing smaller, more focused units from the start, and the codebase stays navigable as it grows.
+These constraints encode principles you would enforce as a developer anyway if you care about clean code architecture and patterns: composability, separation of concerns, and testable units. The difference is that a lint rule applies them automatically and immediately, enforcing deterministically what would otherwise require constant vigilance—without waiting for review, without relying on the LLM's judgment in the moment. The agent adapts by producing smaller, more focused units from the start, and the codebase stays navigable as it grows.
 
 #### Project-specific rules are the real leverage
 
 The highest-leverage linting work is the rules you write yourself, specific to your codebase, your domain, and your team's accumulated knowledge.
 
-Every architectural decision that currently lives as team folklore is a lint rule waiting to exist:
+Every architectural decision that currently lives as tacit team knowledge is a lint rule that only waits to exist:
 
 <div class="instruction-block">
   <ul>
@@ -483,7 +482,7 @@ The more project-specific rules you encode, the more the agent's output reflects
 
 Tests are the most direct feedback signal in your harness. A type checker tells the agent the code is structurally valid, a linter tells it the code follows the rules, and tests tell it whether the code *does what it's supposed to do*.
 
-Writing tests used to be expensive and tedious, so teams settled for thin coverage and happy-path-only suites. The feedback loop was limited by how much pain people were willing to take on.
+Writing tests used to be expensive and tedious, so teams sometimes settled for thin coverage and happy-path-only suites. The feedback loop was limited by how much pain the team was willing to absorb.
 
 That cost structure has changed. Describe the behavior, point the agent at the module, and it can draft a test suite quickly. The practical implication is that **coverage gaps are now feedback-loop gaps**, and weak tests are bad signals. The agent will keep moving either way. If the suite does not clearly define correct behavior, nothing reliably catches drift when it happens.
 
@@ -491,27 +490,25 @@ A strict baseline and high-quality tests create a virtuous circle: they become t
 
 ---
 
-## Final principle: your codebase is the highest signal
+## Your codebase is the highest signal
 
-There is one idea running through the whole article.
-
-A tight `CLAUDE.md` is just good documentation. Strict TypeScript configuration is what good engineers try to enforce on every codebase. Lint rules that encode architectural decisions are written institutional knowledge. Hooks that block destructive commands are guardrails a careful team should want anyway. Tests as a feedback loop are not some new insight. They are one of the oldest ideas in software quality.
+A tight `CLAUDE.md` and quality skills is simply good documentation. A strict TypeScript configuration is what good engineers try to enforce on every codebase. Lint rules that encode architectural decisions are written institutional knowledge. Tests as a "feedback loop" are not a new insight—it is **one** of the oldest ideas in software quality.
 
 ### Harness engineering is just good engineering
 
-What is new is the cost of not doing it. When a human engineer skips documentation or writes a weak test, the gap often gets papered over by judgment and institutional memory. The system is lossy, but it usually holds together.
+What is new is the cost of not doing it. When a human developer skips documentation or writes a weak test, the gap is often compensated by the team's judgment and memory that is capable of navigating those gaps. The system is imperfect, but it can generally hold together.
 
-An agent has none of that. Every gap in your harness is a gap the agent will fall through, quietly, on every task.
+An agent has none of that. Every gap in your harness is a gap the agent may fall into.
 
 The paradox is that a well-engineered codebase barely needs CLAUDE.md at all.
 
-Agents are strong pattern matchers. If architectural decisions show up consistently, import boundaries are enforced in lint rules, and modules follow the same conventions, the agent does not need the rules spelled out every time. It can read them from the environment.
+Agents are strong pattern matchers. If architectural decisions and code patterns show up consistently, the agent does not need the rules spelled out every time because it can read them from the environment.
 
-Manual context layer exists to compensate for gaps. Eliminate the gaps and you eliminate most of what the file needed to say.
+Manual context layers exist to compensate for gaps. Eliminate the gaps and you eliminate most of what those AGENTS and skills files needed to say.
 
 The discipline harness engineering asks for is the same discipline good engineering has always asked for: **encode decisions so they outlive the people who made them, prefer deterministic enforcement over tribal knowledge, and close feedback loops early.**
 
-What has changed is where your attention goes: the agent handles the typing, and your job is to improve the environment it types into. The underrated promise of agentic development is that a well-engineered codebase, under constant automated pressure, converges toward quality faster than any team ever could manually.
+What has changed is where your attention goes: the agent writes the code, and your job is to review and improve the environment it operates in. The underrated promise of agentic development is that a well-designed codebase, under constant automated pressure, converges toward **optimal quality** faster than any team ever could manually.
 
 ---
 

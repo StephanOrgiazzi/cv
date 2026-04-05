@@ -17,17 +17,17 @@ translationKey: "harness-engineering"
 
 ## Pourquoi c'est important
 
-Vous avez configuré Claude Code, ajouté quelques serveurs MCP, lancé une commande `/init` pour générer un `CLAUDE.md`, et peut-être même ajouté quelques skills. Avec la dernière génération de LLM, ça fonctionne globalement bien la plupart du temps. Mais malgré cela, petit à petit, plus de nouvelles features sont implémentées, plus les choses peuvent devenir bancales : l'agent ignore certains skills, le contexte se remplit trop vite, et la qualité des réponses et du code se dégrade.
+Vous avez configuré Claude Code, ajouté quelques serveurs MCP, lancé une commande `/init` pour générer un `CLAUDE.md`, et peut-être même ajouté quelques skills. Avec la dernière génération de LLM, ça fonctionne globalement bien la plupart du temps. Mais malgré cela, petit à petit, plus de nouvelles fonctionnalités sont implémentées, plus les choses peuvent devenir bancales : l'agent ignore certains skills, le contexte se remplit trop vite, et la qualité des réponses et du code se dégrade.
 
-Le réflexe habituel est d'en ajouter davantage : plus de skills, plus de règles, plus de documentation. Et pourtant, même si cela peut sembler contre-intuitif, cela dégrade souvent la qualité du code. La plupart des ratés de l'agent sont des **échecs de « context management »**, et entasser du contenu dans la fenêtre de contexte aggrave généralement la situation.
+Le réflexe habituel est d'en ajouter davantage : plus de skills, plus de règles, plus de documentation. Et pourtant, même si cela peut sembler contre-intuitif, cela dégrade souvent la qualité du code. La plupart des ratés de l'agent sont des **échecs de "context management"**, et entasser du contenu dans la fenêtre de contexte aggrave généralement la situation.
 
 <blockquote class="article-pullquote">
   <p>Chaque règle ajoutée au <code>CLAUDE.md</code>, chaque skill, chaque hook, est un <strong>patch</strong>.</p>
 </blockquote>
 
 Ces règles compensent quelque chose que la codebase ne parvient pas à communiquer d'elle-même. Un module bien structuré, avec des conventions cohérentes, n'a pas besoin d'un paragraphe de règles implicites pour être compris : l'agent peut le lire directement.
-Ce changement de paradigme est important parce qu'il redéfinit ce à quoi sert réellement le harness engineering. Le but n'est pas d'empiler des couches de règles, mais de rendre chacune superflue, une décision à la fois, en l'encodant dans la codebase elle-même, là où elle devient permanente, visible et impossible à ignorer.
-Analyser les couches du contexte nous permettent justement de révéler précisément où se situent les lacunes.
+Ce changement de paradigme est important car il redéfinit le rôle réel du harness engineering. Le but n'est pas d'empiler des couches de règles, mais de rendre chacune superflue, une décision à la fois, en l'encodant dans la codebase elle-même, là où elle devient permanente, visible et impossible à ignorer.
+Analyser les couches du contexte nous permet justement de révéler précisément où se situent les lacunes.
 
 ## Le problème central
 
@@ -45,11 +45,11 @@ Le modèle d'exécution central d'un agent est une boucle itérative :
   <span>Terminé ou nouvelle boucle</span>
 </div>
 
-À chaque étape, l'agent puise dans sa "context window" : un buffer de taille fixe qui contient tout ce qu'il "sait" à un instant donné sur la session, y compris les instructions, l'historique de conversation, le contenu des fichiers et les résultats de "tool callings". Quand ce buffer devient surchargé, l'agent ne se dégrade pas proprement : il commence à faire des erreurs subtiles.
+À chaque étape, l'agent puise dans sa "context window" : un buffer de taille fixe qui contient tout ce qu'il "sait" à un instant donné sur la session, y compris les instructions, l'historique de conversation, le contenu des fichiers et les résultats d'appels d'outils. Quand ce buffer devient surchargé, l'agent ne se dégrade pas proprement : il commence à faire des erreurs subtiles.
 
 **Une mauvaise information dans le contexte est pire qu'une information absente.** Le signal utile s'enfouit sous du contenu non pertinent, et l'agent cesse de distinguer les deux de manière fiable.
 
-### La réponse en context-layers (ou "couches de contexte")
+### La réponse : les context-layers (ou "couches de contexte")
 
 La réponse n'est pas d'ajouter plus de contexte, mais de construire un harness (un cadre) pensé autour de la façon dont chaque outil interagit avec la fenêtre de contexte.
 
@@ -94,7 +94,7 @@ La réponse n'est pas d'ajouter plus de contexte, mais de construire un harness 
 
 En pratique :
 1. **Permanent** : ce qui doit être présent systématiquement.
-2. **On-demand** : ce qui ne doit être fourni seulement quand l'agent en a besoin.
+2. **On-demand** : ce qui ne doit être fourni que quand l'agent en a besoin.
 3. **System** : ce qui doit être imposé par le système (ou l'OS).
 4. **Feedback** : ce qui vérifie le résultat après exécution.
 
@@ -104,7 +104,7 @@ En pratique :
 
 Il s'agit du fichier Markdown à la racine du projet qui est systématiquement chargé dans le contexte de l'agent, sans être explicitement invoqué.
 
-Le premier réflexe, quand on en met un en place, est d'écrire tout ce qui passe : vue d'ensemble de l'architecture, structure des dossiers, conventions d'équipe, choix des librairies, notes d'onboarding, etc... Il faut résister à cette envie. **Un fichier de contexte permanent doit être court, strict et opérationnel.** Si une règle ne vaut pas la peine d'être appliquée à chaque tâche, elle n'a probablement pas sa place ici.
+Le premier réflexe, quand on en met un en place, est d'écrire tout ce qui décrit le repo : vue d'ensemble de l'architecture, structure des dossiers, conventions d'équipe, choix des librairies, notes d'onboarding, etc... Il faut résister à cette envie. **Un fichier de contexte permanent doit être court, strict et opérationnel.** Si une règle ne vaut pas la peine d'être appliquée à chaque tâche, elle n'a probablement pas sa place ici.
 
 ### Keep it short
 
@@ -146,7 +146,7 @@ Aidez l'agent à obtenir le contexte pertinent lorsque la documentation d'API ne
 
 </div>
 
-<p class="article-note"><em>Note : dans les sections suivantes, vous verrez qu'une partie de ces éléments peut souvent être déplacée vers la couche « on-demand » ou « system » pour améliorer encore la gestion du contexte.</em></p>
+<p class="article-note"><em>Note : dans les sections suivantes, vous verrez qu'une partie de ces éléments peut souvent être déplacée vers la couche "on-demand" ou "system" pour améliorer encore la gestion du contexte.</em></p>
 
 ---
 
@@ -154,44 +154,44 @@ Aidez l'agent à obtenir le contexte pertinent lorsque la documentation d'API ne
 
 Tout ce qui n'a pas besoin de résider dans le contexte permanent doit, par défaut, vivre ici.
 
-Le principe est simple : si l'information est spécialisée ou pertinente seulement dans certains contextes, elle doit être récupérée au moment où on en a besoin. Cela réduit le bruit, économise la « context window » et améliore la précision.
+Le principe est simple : si l'information est spécialisée ou pertinente seulement dans certains contextes, elle doit être récupérée au moment où on en a besoin. Cela réduit le bruit, économise la "context window" et améliore la précision.
 
 ### Skills
 
-Quand ils sont bien conçus, les skills sont l'un des leviers les plus efficaces d'un harness. Ils déplacent les connaissances spécialisées hors du contexte permanent vers un modèle de récupération à la demande : l'agent va chercher ce dont il a besoin, quand il en a besoin. La fenêtre de contexte reste propre, et vous ne payez le coût de l'expertise que lorsque vous en avez réellement besoin. C'est l'argument fondamental contre un `CLAUDE.md` qui grossit sans fin : le contexte permanent est un coût fixe, les skills sont un coût variable. En pratique, migrez autant que possible les règles de votre `AGENTS.md` / `CLAUDE.md` vers des skills dédiées.
+Quand ils sont bien conçus, les skills sont l'un des leviers les plus efficaces d'un harness. Ils déplacent les connaissances spécialisées hors du contexte permanent vers un modèle de récupération à la demande : l'agent va chercher ce dont il a besoin, quand il en a besoin. La fenêtre de contexte reste propre, et vous ne payez le coût de l'expertise que lorsque vous en avez réellement besoin. C'est la solution au problème du `CLAUDE.md` qui grossit sans fin : le contexte permanent est un coût fixe tandis que les skills sont un coût variable. En pratique, migrez autant que possible les règles de votre `AGENTS.md` / `CLAUDE.md` vers des skills dédiées.
 
-Un skill n'est pas seulement un fichier `.md`. C'est un répertoire en trois parties :
+Un skill n'est pas toujours seulement un fichier `.md`. C'est un répertoire en trois parties :
 
-- **`SKILL.md` (obligatoire) :** contient un frontmatter YAML (métadonnées) et des instructions en Markdown. L'agent ne lit d'abord que le nom et la description. Si cela correspond à la demande de l'utilisateur, il ouvre ensuite le fichier pour suivre les instructions.
-- **`scripts/` (optionnel) :** du code exécutable (Bash, JS/TS, Python) qui permet à l'agent d'effectuer des actions que le LLM ne peut pas réaliser nativement.
-- **`references/` (optionnel) :** de la documentation plus approfondie, chargée uniquement si l'agent doit vérifier un point bien précis en cours de tâche.
+- **`SKILL.md` (obligatoire) :** contient un frontmatter YAML (métadonnées) et des instructions en Markdown. L'agent ne charge que le nom et la description du frontmatter dans son contexte. S'il juge que la description correspond à la demande de l'utilisateur, il ouvre ensuite le fichier en entier pour suivre les instructions.
+- **`scripts/` (optionnel) :** du code exécutable (Bash, JS/TS, Python) qui permet à l'agent d'effectuer des actions au LLM.
+- **`references/` (optionnel) :** de la documentation plus approfondie, chargée uniquement si l'agent doit vérifier un point bien précis en cours de tâche. C'est une sous-couche supplémentaire du contexte à la demande.
 
 #### Les trois grands types de skills
 
 ##### 1. Skills de documentation et de connaissance
 
-Même les modèles les plus avancés ont une "knowledge cutoff", une date de coupure des connaissances.
+Même les modèles les plus avancés ont une "knowledge cutoff", une date de coupure des connaissances liée à la fin de leur entrainement.
 
 - **But :** fournir une information que l'agent ne connaît pas, ou qu'il risque de mal se rappeler.
 - **Exemple :** si vous utilisez **Expo SDK 55**, l'agent peut ne pas connaître les détails de l'API, simplement parce que cette version en particulier n'était peut-être pas dans ses données d'entraînement.
 - **Solution :** [Expo Skills](https://expo.dev/expo-skills)
 
-##### 2. « Behaviors » et « best practices »
+##### 2. Skills de "best practices"
 
-Les LLM ont tendance à produire du code « moyen ».
+Les LLM ont tendance à produire du code de "moyenne" qualité.
 
 - **But :** pousser l'implémentation vers un niveau de qualité expert, aligné avec les standards du projet.
 - **Exemple :** un skill construit à partir de l'article des best practices de l'équipe React [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect).
 - **Solution :** [React useEffect Skill](https://github.com/softaworks/agent-toolkit/tree/main/skills/react-useeffect)
 
-##### 3. « Functionality » et « tooling »
+##### 3. Skills de "tooling"
 
 C'est probablement le type de skill le plus sous-utilisé.
 
 - **But :** donner à l'agent des capacités qu'il n'a pas nativement, en embarquant des scripts qui produisent un résultat que le modèle seul ne peut pas produire.
 - **Exemple :** un skill [codebase-visualizer](https://code.claude.com/docs/en/skills) qui exécute un script embarqué pour générer un arbre HTML interactif du projet.
 - **Pourquoi c'est important :** sans le script, ce n'est qu'un prompt. Avec le script, c'est un outil.
-#### Risques : « bloat » et sécurité
+#### Risques : "bloat" et sécurité
 
 Il est tentant d'installer tous les skills de bonnes pratiques que vous trouvez, mais c'est généralement une erreur :
 
@@ -200,28 +200,28 @@ Il est tentant d'installer tous les skills de bonnes pratiques que vous trouvez,
 
 #### How to : [installer des skills pour votre agent](https://docs.specstory.com/agent-skills/installation)
 
-### MCP pour les intégrations « stateful »
+### MCP pour les intégrations "stateful"
 
 MCP (Model Context Protocol) est un standard ouvert pour la communication structurée entre un agent et des systèmes externes. Concrètement, un serveur MCP est un petit service Node.js ou Python qui expose des outils typés que l'agent peut appeler. L'agent découvre les outils, en invoque un, et reçoit une réponse structurée en retour.
 Cela devient pertinent dans deux cas principaux :
 
 #### 1. Intégrations authentifiées
 
-Certains systèmes nécessitent une connexion persistante avec credentials qu'une commande shell ponctuelle ne gère pas proprement : [Atlassian](https://github.com/atlassian/atlassian-mcp-server), [GitHub](https://github.com/github/github-mcp-server), [Context7](https://github.com/upstash/context7), et autres.
+Certains systèmes nécessitent une connexion persistante avec credentials : [Atlassian](https://github.com/atlassian/atlassian-mcp-server), [GitHub](https://github.com/github/github-mcp-server), [Context7](https://github.com/upstash/context7), et autres.
 
 #### 2. Manipulation d'état externe
 
 MCP est aussi le bon outil quand l'agent doit opérer *à l'intérieur* d'un autre système, pas seulement le requêter.
 
-Un bon exemple est  [Chrome DevTools MCP](https://developer.chrome.com/blog/chrome-devtools-mcp?hl=fr) : l'agent peut ouvrir Chrome, inspecter le DOM et le CSS en direct, lire l'activité console et réseau, simuler des flux utilisateur, et enregistrer une trace de performance via DevTools. Il ne se contente pas de récupérer de la documentation sur la page. Il opère à l'intérieur d'une session navigateur active et lit le state résultant. Le state réside dans Chrome, pas dans la fenêtre contextuelle, et MCP est le pont.
+Un bon exemple est  [Chrome DevTools MCP](https://developer.chrome.com/blog/chrome-devtools-mcp?hl=fr) : l'agent peut ouvrir Chrome, inspecter le DOM et le CSS en direct, lire l'activité console et réseau, simuler des flux utilisateur, et enregistrer une trace de performance via DevTools. Il ne se contente pas de récupérer de la documentation sur la page. Il opère à l'intérieur d'une session navigateur active et lit le state résultant. Le state réside dans Chrome, pas dans la fenêtre de contexte, et MCP est le pont.
 
-Les outils MCP ne sont généralement pas très efficaces en termes de tokens. **Si vous n'avez pas besoin d'authentification ou d'état externe persistant, vous n'avez probablement pas besoin de MCP.** Un skill résout généralement le même problème avec moins d'overhead et moins de complexité.
+Les outils MCP ne sont généralement pas très efficaces en termes de tokens. **Si vous n'avez pas besoin d'authentification ou d'état externe persistant pour opérer à l'intérieur d'un autre système, vous n'avez probablement pas besoin de MCP.** Un skill résout généralement le même problème avec moins d'overhead et moins de complexité.
 
 ### WebSearch et WebFetch pour la récupération d'information
 
 Ces outils sont natifs à la plupart des agents modernes. Ils résolvent deux problèmes :
 
-- **Knowledge cutoff:** un modèle de langage s'entraîne sur un instantané du monde à une date donnée. Pour tout ce qui évolue, une nouvelle version de Next.js, du Expo SDK, un breaking change, le modèle ne sait pas.
+- **Knowledge cutoff:** un modèle de langage s'entraîne sur un instantané du monde à une date donnée. Pour tout ce qui évolue, une nouvelle version de Next.js, d'Expo SDK, un breaking change, le modèle ne sait pas.
 - **Erreurs de précision:** même pour des APIs stables présentes dans les données d'entraînement, le modèle peut générer des détails plausibles mais incorrects : mauvaises signatures de méthodes, comportements de cas limites inventés, etc...
 
 `WebSearch` et `WebFetch` répondent aux deux. Architecturalement, ils fournissent de la *récupération à la demande* : au lieu de se fier aux poids du pré-entraînement, l'agent récupère la donnée factuelle depuis des sources à jour et raisonne à partir de celle-ci.
@@ -243,7 +243,7 @@ La CLI est une surface d'exécution naturelle pour les agents, et elle se divise
 
 #### Outils natifs
 
-Les fondamentaux Unix (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) et les commandes git de base sont profondément ancrés dans l'entraînement de la plupart des LLM. Ils ne nécessitent aucune introduction et ont un coût de contexte quasi nul. L'agent peut les enchaîner, les piper, et les adapter à des situations nouvelles sans instructions explicites.
+Les fondamentaux Unix (`find`, `grep`, `sed`, `awk`, `jq`, `curl`) et les commandes git de base sont profondément ancrés dans l'entraînement de la plupart des LLM. Ils ne nécessitent aucune introduction et ont un coût de contexte quasi nul. L'agent peut les enchaîner et les adapter à des situations nouvelles sans instructions explicites.
 
 #### CLI augmentées
 
@@ -255,7 +255,7 @@ La même logique s'applique à un ensemble d'outils plus large :
 - Les CLIs de cloud providers comme [`AWS CLI`](https://github.com/aws/aws-cli) et [`Azure CLI`](https://github.com/Azure/azure-cli?wt.mc_id=developermscom) exposent des centaines d'opérations que l'agent peut enchaîner directement, avec une syntaxe qu'il connaît déjà depuis l'entraînement.
 - Des CLI custom construites spécifiquement pour vos projets
 
-Quand utiliser la CLI ? Si un outil a une CLI mature et que l'agent peut s'appuyer sur ses connaissances d'entraînement comme point de départ, **préférez la CLI**. MCP s'impose quand l'outil n'a pas de CLI, quand l'authentification est trop délicate à gérer proprement en shell, ou quand le workflow nécessite un état persistant dans un système externe.
+Quand utiliser la CLI ? Si un outil dispose d'une CLI mature et que l'agent peut s'appuyer sur ses connaissances d'entraînement comme point de départ, **préférez la CLI**. MCP s'impose quand l'outil n'a pas de CLI, quand l'authentification est trop délicate à gérer proprement en shell, ou quand le workflow nécessite un état persistant dans un système externe.
 
 ### Les subagents comme workers isolés
 
@@ -266,31 +266,31 @@ Un subagent est un agent "spawné" par l'agent principal pour gérer une sous-t�
 - de son propre scope
 - puis retourne un résultat au parent
 
-Du point de vue de la Context-Layer Architecture, cela compte parce que ça déplace le travail hors du contexte principal.
+Du point de vue de la Context-Layer Architecture, cela compte car cela déplace le travail hors du contexte principal.
 Au lieu de charger une analyse approfondie de la codebase (ou une longue séquence de diagnostic) dans la fenêtre principale, vous déléguez. L'agent parent voit simplement le résultat, pas tout le raisonnement intermédiaire ni les lectures de fichiers qui l'ont produit.
 Les bénéfices concrets sont :
 
-- **Isolation :** chaque subagent travaille avec sa propre fenêtre contextuelle et évite ainsi qu'une tâche latérale pollue le contexte principal.
+- **Isolation :** chaque subagent travaille avec sa propre fenêtre de contexte et évite ainsi qu'une tâche latérale pollue le contexte principal.
 - **Parallélisme :** ils peuvent avancer en même temps sur des tâches indépendantes, comme écrire des tests pour le module A pendant qu'un refactor a lieu sur le module B.
 
-En pratique, la plupart des agents gèrent ça automatiquement. Claude Code, Codex, Kiro et des outils similaires spawnent des subagents quand les tâches le justifient. Vous ne configurez généralement pas cela, mais vous pouvez, si vous le souhaitez, spawner des subagents personnalisés pour des sous-tâches bien définies.
+En pratique, la plupart des agents gèrent ça automatiquement. Claude Code, Codex, Kiro et des outils similaires spawnent des subagents quand les tâches le justifient. Vous ne configurez généralement pas cela, mais vous pouvez, si vous souhaitez un contrôle plus fin, spawner des subagents personnalisés pour des sous-tâches bien définies.
 
 ---
 
 ## Couche 3 : System Layer (hooks et permissions)
 
-C'est la couche d'enforcement, qui permet de forcer les choses au niveau system. Contrairement à la couche permanente et à la couche on-demand, elle ne repose pas du tout sur le jugement probabiliste du LLM. Elle intercepte l'exécution à des événements de cycle de vie et autorise, bloque, ou transforme les actions avant qu'elles n'atteignent le filesystem ou des systèmes externes. Les permissions et les hooks s'exécutent de manière déterministe. Ils n'oublient jamais les règles quand le contexte est saturé, c'est pourquoi ils constituent la surface d'enforcement la plus fiable de la stack.
+C'est la couche d'enforcement, qui permet de forcer les choses au niveau system. Contrairement à la couche permanente et à la couche on-demand, elle ne repose pas du tout sur le jugement probabiliste du LLM. Elle intercepte l'exécution à des événements de cycle de vie et autorise, bloque, ou transforme les actions avant qu'elles n'atteignent le filesystem ou des systèmes externes. Les permissions et les hooks s'exécutent de manière déterministe. Ils n'oublient jamais les règles quand le contexte est saturé, c'est pourquoi ils constituent la surface d'enforcement la plus fiable du harness.
 
 ### Permissions
 
-Les permissions définissent ce que l'agent est autorisé à faire : accès au filesystem, accès réseau, et commandes CLI whitelistées. Il y a généralement peu à tweaker ici, mais évitez de whitelister des commandes destructives que vous ne voudriez jamais voir s'exécuter sans approbation.
+Les permissions définissent ce que l'agent est autorisé à faire : accès au filesystem, accès réseau, et des commandes CLI autorisées. Il y a généralement peu à ajuster ici, mais évitez d'autoriser des commandes destructives que vous ne voudriez jamais voir s'exécuter sans approbation.
 
 ### Hooks : enforcement déterministe
 
 Là où une règle dans `AGENTS.md/CLAUDE.md` peut être ignorée, un hook est une barrière stricte.
 Contrairement aux `AGENTS.md/CLAUDE.md`, les hooks ne vivent pas dans le prompt. Ils n'injectent du contenu dans le contexte que quand ils échouent. Cela rend les hooks idéaux pour les règles que vous **ne voulez jamais voir violées**, sans payer un coût contextuel permanent.
 
-<p class="article-note"><em>Note : l'implémentation des hooks décrite dans cette section correspond à celle de Claude Code. Les autres agents peuvent exposer un modèle, des événements ou des handlers différents, car cette couche n'est pas encore réellement standardisée.</em></p>
+<p class="article-note"><em>Note : l'implémentation des hooks décrite dans cette section correspond à celle de Claude Code. Les autres agents qui implémentent les hooks peuvent exposer un modèle, des événements ou des handlers différents, car cette couche n'est pas encore réellement standardisée.</em></p>
 
 #### Types de handlers
 
@@ -305,9 +305,9 @@ Claude Code supporte trois types de handlers :
 Concentrez-vous d'abord sur `command`. Il est déterministe, rapide, n'a aucun coût d'inférence, et couvre la plupart des besoins.
 
 - `PreToolUse` pour valider ou refuser une action avant exécution.
-- `PostToolUse` pour le « cleanup », les vérifications ou le « feedback » après exécution.
+- `PostToolUse` pour le "cleanup", les vérifications ou le " feedback " après exécution.
 
-Utilisez `PreToolUse` pour les **« policy guards »** et `PostToolUse` pour le **« cleanup » et le « feedback »**.
+Utilisez `PreToolUse` pour les **"policy guards"** et `PostToolUse` pour le **"cleanup" et le "feedback"**.
 
 #### Lifecycle events
 
@@ -355,7 +355,7 @@ Beaucoup de règles qui encombrent `AGENTS.md/CLAUDE.md` sont en réalité des c
 
 Ce sont des contraintes strictes, pas de la connaissance implicite. La règle `use-pnpm` devient un hook `PreToolUse` qui inspecte chaque commande shell. La protection de `__generated__` devient un contrôle de chemin sur les opérations d'écriture. Le format des commits s'impose sur les outils shell qui invoquent `git commit`.
 
-Déplacer les règles d'« enforcement » hors du contexte permanent et dans les hooks est **l'un des nettoyages les plus rentables que vous puissiez faire**. Cela permet de garder `AGENTS.md/CLAUDE.md` centré sur ce qui a réellement besoin de contexte, et de réserver la couche système à ce qui exige des **garanties absolues**.
+Déplacer les règles d'"enforcement" hors du contexte permanent et dans les hooks est **l'un des nettoyages de contexte les plus effciaces que vous puissiez faire**. Cela permet de garder `AGENTS.md/CLAUDE.md` centré sur ce qui a réellement besoin de contexte, et de réserver la couche système à ce qui exige des **garanties absolues**.
 
 ---
 
@@ -363,7 +363,7 @@ Déplacer les règles d'« enforcement » hors du contexte permanent et dans les
 
 Cette boucle de vérification referme le cycle d'action de l'agent. C'est l'une des couches les moins développées dans beaucoup de setups agentiques, et pourtant l'une des plus importantes à bien construire.
 
-L'agent peut produire quelque chose, annoncer que c'est réussi, et pourtant se tromper. La « feature » peut fonctionner, mais la qualité du code peut rester médiocre. La couche feedback est là pour capter cela. Les tests valident la correction fonctionnelle, le type checking attrape tôt les erreurs structurelles, et le lint impose de la cohérence sans dépendre d'un humain à chaque étape. Ensemble, ces vérifications maintiennent une codebase de qualité et permettent à l'agent d'évoluer de manière plus **« autonome »**.
+L'agent peut produire quelque chose, annoncer que c'est réussi, et pourtant se tromper. La fonctionnalité peut fonctionner, mais la qualité du code peut rester médiocre. La couche feedback est là pour capter cela. Les tests valident la correction fonctionnelle, le type checking attrape tôt les erreurs structurelles, et le lint impose de la cohérence sans dépendre d'un humain à chaque étape. Ensemble, ces vérifications maintiennent une codebase de qualité et permettent à l'agent d'évoluer de manière plus **autonome**.
 
 ### Type checking
 
@@ -371,7 +371,7 @@ L'agent peut produire quelque chose, annoncer que c'est réussi, et pourtant se 
 
 #### Des règles plus strictes = du signal gratuit
 
-Pour un développeur humain, une config TypeScript stricte peut ressembler à de la friction. Elle ralentit, force des décisions explicites, et fait remonter des erreurs qu'on comptait nettoyer plus tard. Dans le développement agentique, cette logique s'inverse. L'agent n'a pas vraiment de notion de "plus tard". Il produit du code, reçoit un signal, et réagit immédiatement.
+Pour un développeur humain, une config TypeScript très stricte peut ressembler à de la friction. Elle ralentit, force des décisions explicites, et fait remonter des erreurs qu'on comptait nettoyer plus tard. Dans le développement agentique, cette logique s'inverse. L'agent n'a pas vraiment de notion de "plus tard". Il produit du code, reçoit un signal, et réagit immédiatement.
 
 Plus le compilateur est strict, plus le signal est riche. Une config `tsconfig` stricte n'est **pas une contrainte pour l'agent**. C'est un **multiplicateur de qualité gratuit** appliqué à tout ce qu'il produit.
 
@@ -379,7 +379,7 @@ Les règles qui valent la peine d'être activées :
 
 - `strict: true` dans `tsconfig.json` est non négociable dans un contexte agentique.
 - `noUnusedLocals` et `noUnusedParameters` attrapent les débris de refactor.
-- `allowUnreachableCode: false` et `allowUnusedLabels: false` font remonter le dead code dès son introduction.
+- `allowUnreachableCode: false` et `allowUnusedLabels: false` font remonter le code mort instantanément.
 - `noUncheckedSideEffectImports: true` bloque les imports à effets de bord quand l'existence du module n'est pas vérifiable.
 - `noFallthroughCasesInSwitch: true` impose une intention explicite pour chaque `switch`.
 - `paths: { "@/*": ["./src/*"] }` n'est pas une règle de validation, mais un contrat structurel.
@@ -390,15 +390,15 @@ Un compilateur plus strict ne ralentit pas l'agent. Il lui donne un meilleur sig
 
 #### Le linter est un contrat d'architecture
 
-La même logique qu'avec un `tsconfig` strict s'applique ici. Chaque règle de lint ajoutée est un capteur à zéro token qui se déclenche sur chaque changement produit par l'agent, sans espérer que le modèle se souvienne du bon paragraphe dans `CLAUDE.md`, sans attendre la « review », sans compter sur un humain pour repérer le problème plus tard. La différence, c'est que le type checker impose la correction structurelle. Le linter impose l'intention : décisions d'architecture, conventions d'équipe, « patterns » dépréciés et règles métier que le système de types ne sait pas exprimer.
+La même logique qu'avec un `tsconfig` strict s'applique ici. Chaque règle de lint ajoutée est un capteur à zéro token qui se déclenche sur chaque changement produit par l'agent, sans espérer que le modèle se souvienne du bon paragraphe dans `CLAUDE.md`, sans attendre la review, sans compter sur un humain pour repérer le problème plus tard. La différence, c'est que le type checker impose la correction structurelle. Le linter impose l'intention : décisions d'architecture, conventions d'équipe, patterns dépréciés et règles métier que le système de types ne sait pas exprimer.
 
 Un agent qui produit du *code moyen* est souvent un agent qui travaille sans assez de contraintes. Le linter est une manière de **relever le niveau**.
 
-#### La philosophie des « baselines » strictes
+#### La philosophie des "baselines" strictes
 
-Avant d'écrire des règles custom, commencez par une base stricte qui traite les erreurs de lint en échec et non en warnings. Une baseline stricte capte toute une classe d'erreurs typiques des LLM, comme les assertions inutiles, un « error handling » trop large, des « generics » brouillons, des « barrel imports », des « exhaustive checks » manquants, etc., au moment même où elles apparaissent. La qualité devient alors une propriété de l'environnement, pas quelque chose qu'il faut redemander dans un nouveau prompt.
+Avant d'écrire des règles custom, commencez par une base stricte qui traite les erreurs de lint en échec et non en warnings. Une baseline stricte capte toute une classe d'erreurs typiques des LLM, comme les assertions inutiles, une gestion d'erreurs exagérément large, des generics brouillons, des "barrel imports", des "exhaustive checks" manquants, etc., au moment même où elles apparaissent. La qualité devient alors une propriété de l'environnement, pas quelque chose qu'il faut redemander dans un nouveau prompt.
 
-[Ultracite](https://www.ultracite.ai/) est un bon exemple de cette philosophie. C'est un preset de « lint » très « opinionated » qui embarque des centaines de règles sur TypeScript, React, l'accessibilité, les imports et la qualité de code, calibrées pour être strictes sans créer trop de "bruit". Que vous adoptiez Ultracite ou que vous [composiez votre propre équivalent](https://github.com/StephanOrgiazzi/ironoxlint), le principe reste le même : une base stricte remplace une grande partie des allers-retours fastidieux avec l'agent et fournit, dès le départ, un « enforcement » avec un fort « signal-to-noise ratio ».
+[Ultracite](https://www.ultracite.ai/) est un bon exemple de cette philosophie. C'est un preset de lint très "opinionated " qui embarque des centaines de règles sur TypeScript, React, l'accessibilité, les imports et la qualité de code, calibrées pour être strictes sans créer trop de "bruit". Que vous adoptiez Ultracite ou que vous [composiez votre propre équivalent](https://github.com/StephanOrgiazzi/ironoxlint), le principe reste le même : une base stricte remplace une grande partie des allers-retours fastidieux avec l'agent et fournit, dès le départ, un "enforcement" avec un fort "signal-to-noise ratio".
 
 #### Les limites de taille des fichiers et des fonctions comme garde-fous architecturaux
 
@@ -415,13 +415,13 @@ On peut résoudre cela de manière déterministe avec des règles ESLint/OxLint 
 }
 ```
 
-Ces contraintes encodent des principes que vous appliqueriez déjà en tant que développeur pour peu que vous teniez à garder une architecture propre et à garantir de bons patterns : composabilité, séparation des responsabilités et unités testables. La différence, c'est qu'une règle de lint les applique automatiquement et immédiatement, en imposant de manière déterministe ce qui demanderait sinon une vigilance constante, sans attendre la review et sans dépendre du jugement du modèle sur le moment. L'agent s'adapte en produisant dès le départ des unités plus petites et plus ciblées, et la codebase reste navigable à mesure qu'elle grandit.
+Ces contraintes encodent des principes que vous appliqueriez déjà en tant que développeur pour peu que vous teniez à garder une architecture propre et à garantir de bons patterns : composabilité, séparation des responsabilités et unités testables. La différence, c'est qu'une règle de lint les applique automatiquement et immédiatement, en imposant de manière déterministe ce qui demanderait sinon une vigilance constante, sans attendre la review et sans dépendre du jugement du LLM. L'agent s'adapte en produisant dès le départ des unités plus petites et plus ciblées, et la codebase reste navigable à mesure qu'elle grandit.
 
 #### Les règles spécifiques au projet sont le vrai levier
 
 Les meilleures règles de linting sont les règles que vous écrivez vous-même, spécifiques à votre codebase, à votre domaine et à la connaissance accumulée par votre équipe.
 
-Chaque décision d'architecture qui vit aujourd'hui comme folklore d'équipe est une règle de lint qui attend d'exister :
+Chaque décision d'architecture qui vit aujourd'hui comme règle tacite d'équipe est une règle de lint qui n'attend qu'à exister :
 
 <div class="instruction-block">
   <ul>
@@ -432,9 +432,9 @@ Chaque décision d'architecture qui vit aujourd'hui comme folklore d'équipe est
   </ul>
 </div>
 
-Chacune de ces règles existe aujourd'hui sous forme de commentaire de PR, de section dans un wiki, ou de connaissance tacite dans la tête de quelqu'un. L'agent n'y accèdera jamais de manière fiable, et rien de tout cela ne résiste bien au turnover d'équipe. Transformez-les en règles, et elles deviennent une partie de l'environnement dans lequel l'agent opère.
+Chacune de ces règles existe aujourd'hui sous forme de commentaire de PR, de section dans un wiki, ou de connaissance tacite dans la tête de quelqu'un. L'agent n'y accèdera jamais de manière fiable, et rien de tout cela ne résiste correctement au turnover d'équipe. Transformez-les en règles, et elles deviennent une partie de l'environnement dans lequel l'agent opère.
 
-`no-restricted-imports` est la « primitive » de gouvernance la plus simple :
+`no-restricted-imports` est la "primitive" de gouvernance la plus simple :
 
 ```json
 "no-restricted-imports": ["error", {
@@ -447,43 +447,41 @@ Chacune de ces règles existe aujourd'hui sous forme de commentaire de PR, de se
 
 Pour l'architecture, `eslint-plugin-boundaries` va plus loin. Il permet de déclarer quelles couches peuvent importer depuis quelles autres : UI, domain, infra, shared, et transforme chaque violation en erreur locale immédiate.
 
-Chaque fois qu'un pattern apparaît plus de deux fois en review, demandez-vous s'il peut devenir une règle de lint. Si oui, il devrait probablement le devenir. **Un commentaire de review récurrent est une règle de lint qui attend d'exister**, et dans un workflow agentique, une règle de lint est bien plus fiable qu'un commentaire.
+Chaque fois qu'un pattern apparaît plus de deux fois en review, demandez-vous s'il peut devenir une règle de lint. Si oui, il devrait probablement le devenir. **Un commentaire de review récurrent est une règle de lint qui attend d'exister**, et dans un workflow agentique, une règle de lint est bien plus fiable qu'un commentaire de code review.
 
-Plus vous encodez de règles spécifiques au projet, plus la sortie de l'agent reflète les vraies exigences de votre codebase plutôt que des moyennes statistiques issues des données d'entraînement. Chaque règle est un capteur supplémentaire. Plus de capteurs veut dire un meilleur signal. Et un meilleur signal veut généralement dire une meilleure sortie.
+Plus vous encodez de règles spécifiques au projet, plus la sortie de l'agent reflète les vraies exigences de votre codebase plutôt que des moyennes statistiques issues des données d'entraînement. Chaque règle est un capteur supplémentaire. Plus de capteurs veut dire un meilleur signal. Et un meilleur signal permet à votre agent de vous donner un meilleur output.
 
 ### Tests
 
 #### Les tests comme signal comportemental
 
-Les tests sont le signal de « feedback » le plus direct dans votre "harness". Le type checker indique à l'agent que le code est structurellement valide, le linter lui dit qu'il respecte les règles, et les tests lui disent si le code *fait réellement ce qu'il est censé faire*.
+Les tests sont le signal de feedback le plus direct dans votre "harness". Le type checker indique à l'agent que le code est structurellement valide, le linter lui dit qu'il respecte les règles, et les tests lui disent si le code *fait réellement ce qu'il est censé faire*.
 
-Écrire des tests était autrefois coûteux et pénible, si bien que certaines équipes se contentaient parfois d'une couverture moyenne de tests passables. La boucle de feedback était limitée par la quantité de "pain points" acceptable.
-Aujourd'hui, le coût de la couverture et de la qualité des tests a changé. Vous décrivez le comportement, vous pointez l'agent vers le composant, et il peut proposer rapidement une suite de tests. La conséquence pratique : **les trous dans la couverture de tests sont désormais des trous dans la « feedback loop »**.
+Écrire des tests était autrefois coûteux et pénible, si bien que certaines équipes se contentaient parfois d'une couverture moyenne ou/et de tests passables. La boucle de feedback était limitée par la quantité jugée acceptable de "pain points" que l'équipe était prête à absorber.
+Aujourd'hui, le coût de la couverture et de la qualité des tests a changé. Vous décrivez le comportement, vous pointez l'agent vers le composant, et il peut proposer rapidement une suite de tests. La conséquence pratique : **les trous dans la couverture de tests sont désormais des trous dans la "feedback loop"**.
 
 Inversement, exiger une couverture complète et des tests de qualité crée un cercle vertueux. Ces tests deviennent des repères tangibles : ils guident l'agent dans ses prochaines modifications et lui permettent d'évoluer avec confiance dans la codebase.
 ---
 
-## Principe final : la codebase est le meilleur contexte
+## La codebase est le meilleur contexte
 
-Une idée centrale traverse tout l'article :
-
-Un `CLAUDE.md` et des skills de qualité, c'est simplement de la bonne documentation. Une configuration TypeScript stricte, c'est ce que les développeurs essaient déjà d'imposer sur chaque codebase. Des règles de lint qui encodent les décisions d'architecture, c'est de la connaissance institutionnelle écrite. Les tests comme « feedback loop » ne sont pas une idée nouvelle, c'est une des idées les plus anciennes de la qualité logicielle.
+Un `CLAUDE.md` et des skills de qualité, c'est simplement de la bonne documentation. Une configuration TypeScript stricte, c'est ce que les développeurs essaient déjà d'imposer sur chaque codebase. Des règles de lint qui encodent les décisions d'architecture, c'est de la connaissance institutionnelle écrite. Les tests comme "feedback loop" ne sont pas une idée nouvelle, c'est **l'une** des idées les plus anciennes de la qualité logicielle.
 
 ### Le "harness engineering", c'est simplement du bon engineering
 
-Ce qui est nouveau, c'est le coût de ne pas le faire. Quand un développeur humain passe à côté d'une doc ou écrit un test passable, le manque est souvent compensé par du jugement et de la mémoire institutionnelle. Le système est imparfait, mais il tient généralement.
+Ce qui est nouveau, c'est le coût de ne pas le faire. Quand un développeur humain passe à côté d'une doc ou écrit un test passable, le manque est souvent compensé par le jugement et la mémoire de l'équipe qui est capable de naviguer malgré ces lacunes. Le système est imparfait, mais il peut généralement tenir.
 
-Un agent n'a rien de tout cela. Chaque trou dans votre harness est un trou dans lequel l'agent tombera, silencieusement, à chaque tâche.
+Un agent n'a rien de tout cela. Chaque trou dans votre harness est un trou dans lequel l'agent risque de tomber.
 
 Le paradoxe, c'est qu'une codebase bien conçue n'a presque plus besoin de `CLAUDE.md`.
 
-Les agents sont d'excellents « pattern matchers ». Si les décisions d'architecture et les patterns de code apparaissent de manière cohérente, l'agent n'a pas besoin qu'on lui réécrive les règles à chaque fois. Il peut les lire dans l'environnement.
+Les agents sont d'excellents "pattern matchers". Si les décisions d'architecture et les patterns de code apparaissent de manière cohérente, l'agent n'a pas besoin qu'on lui réécrive les règles à chaque fois car il peut les lire dans l'environnement.
 
 Les couches de contexte manuelles existent pour compenser les manques. Éliminez les manques, et vous éliminerez l'essentiel de ce que ces fichiers d'AGENTS et de skills avaient besoin de dire.
 
-La discipline que demande le « harness engineering » est la même que celle qu'a toujours demandée le bon engineering : **encoder les décisions pour qu'elles survivent à ceux qui les ont prises, préférer un « enforcement » déterministe à la connaissance tacite, et refermer les « feedback loops » tôt.**
+La discipline que demande le "harness engineering" est la même que celle qu'a toujours demandée le bon engineering : **encoder les décisions pour qu'elles survivent à ceux qui les ont prises, préférer des règles déterministe à la connaissance tacite, et refermer les "feedback loops" tôt.**
 
-Ce qui change, c'est là où porte votre attention : l'agent écrit le code, et votre travail consiste à reviewer et améliorer l'environnement dans lequel il évolue. La promesse sous-estimée du développement agentique, c'est qu'une codebase bien conçu, soumise à une pression automatisée constante, converge vers la qualité optimale plus vite qu'aucune équipe n'aurait pu le faire manuellement auparavant.
+Ce qui change, c'est là où porte votre attention : l'agent écrit le code, et votre travail consiste à reviewer et améliorer l'environnement dans lequel il évolue. La promesse sous-estimée du développement agentique, c'est qu'une codebase bien conçue, soumise à une pression automatisée constante, converge vers la **qualité optimale** plus vite qu'aucune équipe n'aurait pu le faire manuellement auparavant.
 
 ---
 
